@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.0.4</version>
+		<version>2.7.9</version>
 		<relativePath/>
 	</parent>
 	<groupId>ru.yandex.practicum</groupId>
@@ -14,7 +14,7 @@
 	<name>filmorate</name>
 	<description>Приложение для решения вечной дилеммы</description>
 	<properties>
-		<java.version>19</java.version>
+		<java.version>11</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -38,7 +38,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
-
 
 		<dependency>
 			<groupId>junit</groupId>
