@@ -29,18 +29,7 @@ public class FilmController {
 
     @PostMapping
     public Film createFilms(@Valid @RequestBody Film film) {
-        if(film.getDescription().length() > 200) {
-            log.info("Попытка ввести описание более 200 символов");
-            throw new ValidationException("Максимальная длина описания — 200 символов");
-        }
-        if(film.getReleaseDate().isBefore(DAYX)) {
-            log.info("Попытка добавить фильм с датой позднее 28.12.1895");
-            throw new ValidationException("Дата релиза не может быть раньше 28 декабря 1895 года");
-        }
-        if(film.getDuration() <= 0) {
-            log.info("Попытка добавить фильм с отрицательной продолжительностью");
-            throw new ValidationException("Продолжительность фильма должна быть положительной");
-        }
+        filmCheck(film);
         log.info("Фильм добавлен в коллекцию");
         film.setId(filmNextId);
         films.put(filmNextId++, film);
@@ -50,22 +39,7 @@ public class FilmController {
 
     @PutMapping
     public Film updateFilm(@Valid @RequestBody Film film) {
-        if(film.getId() < 0) {
-            log.info("Попытка добавить фильм с id меньше нуля");
-            throw new ValidationException("id не может быть меньше 0");
-        }
-        if(film.getDescription().length() > 200) {
-            log.info("Попытка ввести описание более 200 символов");
-            throw new ValidationException("Максимальная длина описания — 200 символов");
-        }
-        if(film.getReleaseDate().isBefore(DAYX)) {
-            log.info("Попытка добавить фильм с датой позднее 28.12.1895");
-            throw new ValidationException("Дата релиза не может быть раньше 28 декабря 1895 года");
-        }
-        if(film.getDuration() <= 0) {
-            log.info("Попытка добавить фильм с отрицательной продолжительностью");
-            throw new ValidationException("Продолжительность фильма должна быть положительной");
-        }
+        filmCheck(film);
         for (Integer integer : films.keySet()) {
             if(integer == film.getId()) {
                 log.info("Фильм c id={} обновлен в коллекции", film.getId());
@@ -75,5 +49,16 @@ public class FilmController {
         }
         log.info("Попытка изменить фильм по не существующему id");
         throw new ValidationException("Фильма с данным id нет");
+    }
+
+    private void filmCheck(Film film) {
+        if(film.getId() < 0) {
+            log.info("Попытка добавить фильм с id меньше нуля");
+            throw new ValidationException("id не может быть меньше 0");
+        }
+        if(film.getReleaseDate().isBefore(DAYX)) {
+            log.info("Попытка добавить фильм с датой позднее 28.12.1895");
+            throw new ValidationException("Дата релиза не может быть раньше 28 декабря 1895 года");
+        }
     }
 }
