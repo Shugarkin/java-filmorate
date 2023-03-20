@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.controller;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import javax.validation.ConstraintViolation;
@@ -76,15 +75,23 @@ public class FilmValidationTest {
         Set<ConstraintViolation<Film>> violation4 = validator.validate(film4);
         Assertions.assertFalse(violation4.isEmpty());
 
-        try { //проверка на дату
-            filmController.createFilms(Film.builder()
-                    .name("testFilm")
-                    .description("testFilm")
-                    .releaseDate(LocalDate.of(1810, 12, 01))
-                    .duration(60)
-                    .build());
-        } catch (ValidationException e) {
-            Assertions.assertEquals(e.getMessage(), "Дата релиза не может быть раньше 28 декабря 1895 года");
-        }
+        Film film5 = Film.builder() //без описания
+                .name("testFilm")
+                .duration(60)
+                .releaseDate(LocalDate.of(2000, 12, 01))
+                .build();
+
+        Set<ConstraintViolation<Film>> violation5 = validator.validate(film5);
+        Assertions.assertFalse(violation5.isEmpty());
+
+        Film film6 = Film.builder() // проверка кастомной анотации
+                .name("testFilm")
+                .duration(60)
+                .description("testFilm")
+                .releaseDate(LocalDate.of(1810, 12, 01))
+                .build();
+
+        Set<ConstraintViolation<Film>> violation6 = validator.validate(film6);
+        Assertions.assertFalse(violation6.isEmpty());
     }
 }
