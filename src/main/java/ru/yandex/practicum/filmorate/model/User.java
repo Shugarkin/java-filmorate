@@ -13,7 +13,7 @@ public class User {
 
     private int id;
 
-    private Set<Long> friendVault;
+    private Set<Integer> friendVault;
 
     @Email
     @NotBlank

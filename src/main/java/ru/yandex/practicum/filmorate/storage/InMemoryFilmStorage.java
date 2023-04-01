@@ -2,21 +2,16 @@ package ru.yandex.practicum.filmorate.storage;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
-import ru.yandex.practicum.filmorate.model.Film;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import ru.yandex.practicum.filmorate.exception.FilmIsNotFoundException;
+import ru.yandex.practicum.filmorate.model.Film;
+import javax.validation.ValidationException;
+import java.util.*;
 
 @Slf4j
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
     private int filmNextId = 1;
-    private static final LocalDate DAYX = LocalDate.of(1895, 12, 28);
-
     private Map<Integer, Film> films = new HashMap();
 
     public List<Film> getAllFilms() {
@@ -27,6 +22,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Film createFilms(Film film) {
         log.info("Фильм добавлен в коллекцию");
         film.setId(filmNextId);
+        film.setLike(new TreeSet<>());
         films.put(filmNextId++, film);
 
         return film;
@@ -36,6 +32,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         filmCheckId(film);
         if(films.containsKey(film.getId())) {
             log.info("Фильм c id={} обновлен в коллекции", film.getId());
+            film.setLike(new TreeSet<>());
             films.put(film.getId(), film);
             return film;
         }
@@ -48,5 +45,17 @@ public class InMemoryFilmStorage implements FilmStorage {
             log.info("Попытка добавить фильм с id меньше нуля");
             throw new ValidationException("id не может быть меньше 0");
         }
+    }
+
+    public Map<Integer, Film> getFilms() {
+        return films;
+    }
+
+    public Film getFilmForId(int id) {
+        if(!films.containsKey(id)) {
+            throw new FilmIsNotFoundException("Фильм с таким id не найден");
+        }
+        log.info("Получен фильс с id={}", id);
+        return films.get(id);
     }
 }
