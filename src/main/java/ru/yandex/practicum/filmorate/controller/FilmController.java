@@ -27,7 +27,6 @@ public class FilmController {
         this.filmService = filmService;
     }
 
-
     @GetMapping
     public List<Film> getAllFilms() { //получение все фильмов
         return inMemoryFilmStorage.getAllFilms();
@@ -50,7 +49,6 @@ public class FilmController {
         return filmService.addLike(id, userId);
     }
 
-
     @DeleteMapping("/{id}/like/{userId}") //удаление лайка
     @ResponseBody
     public Film deleteLike(@PathVariable("id") Integer id, @PathVariable("userId") Integer userId) {
@@ -69,7 +67,6 @@ public class FilmController {
         return inMemoryFilmStorage.getFilmForId(id);
     }
 
-
     @ExceptionHandler({FilmIsNotFoundException.class, IncorrectIDException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleIncorrect(final RuntimeException e) {
@@ -77,16 +74,16 @@ public class FilmController {
     }
 
     private void checkId(Integer id, Integer userId){
-        if(id == null) {
+        if(id == null){
             throw new IncorrectIDException("Параметр id фильма равен null.");
         }
-        if(userId == null) {
+        if(userId == null){
             throw new IncorrectIDException("Параметр id пользователя при добавления лайка равен null.");
         }
-        if(id <= 0) {
+        if(id <= 0){
             throw new IncorrectIDException("Параметр id фильма имеет отрицательное значение.");
         }
-        if(userId <= 0 ) {
+        if(userId <= 0){
             throw new IncorrectIDException("Параметр id пользователя при добавления лайка имеет отрицательное значение.");
         }
     }

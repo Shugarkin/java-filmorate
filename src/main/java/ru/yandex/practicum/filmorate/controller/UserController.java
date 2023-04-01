@@ -87,16 +87,16 @@ public class UserController {
     }
 
     private void checkIdUserAndFriend(Integer idUser, Integer idFriend) {
-        if(idUser == null) {
+        if(idUser == null){
             throw new IncorrectIDException("Параметр id пользователя равен нулю.");
         }
-        if (idFriend == null) {
+        if(idFriend == null){
             throw new IncorrectIDException("Параметр id друга равен нулю.");
         }
-        if(idUser <= 0) {
+        if(idUser <= 0){
             throw new IncorrectIDException("Параметр id пользователя имеет отрицательное значение.");
         }
-        if(idFriend <= 0) {
+        if(idFriend <= 0){
             throw new IncorrectIDException("Параметр id друга имеет отрицательное значение.");
         }
     }

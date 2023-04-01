@@ -20,7 +20,7 @@ public class FilmService {
 
     public Film addLike(Integer filmId, Integer userId) {
         Map<Integer, Film> mapFilm = inMemoryFilmStorage.getFilms();
-        if(mapFilm.containsKey(filmId)) {
+        if(mapFilm.containsKey(filmId)){
             mapFilm.get(filmId).getLike().add(userId);
             Film film = mapFilm.get(filmId);
             log.info("Пользователем с id={} поставлен лайк фильму с id={}.", userId, filmId);

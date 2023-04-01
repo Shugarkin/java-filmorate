@@ -21,7 +21,7 @@ public class UserService {
 
     public User userAddFriend(int userId, int friendId) { //метод добавления в друзья
         Map<Integer, User> users = inMemoryUserStorage.getUsers();
-        if(users.containsKey(userId) && users.containsKey(friendId)) {
+        if(users.containsKey(userId) && users.containsKey(friendId)){
             users.get(userId).getFriendVault().add(friendId);
             users.get(friendId).getFriendVault().add(userId);
             User user = users.get(userId);
@@ -35,7 +35,7 @@ public class UserService {
         Map<Integer, User> users = inMemoryUserStorage.getUsers();
         if(users.containsKey(userId) && users.containsKey(friendId)) {
             User user = users.get(userId);
-            if(!user.getFriendVault().contains(friendId)) {
+            if(!user.getFriendVault().contains(friendId)){
                 return user;
             }
             users.get(userId).getFriendVault().remove(friendId);
@@ -48,8 +48,7 @@ public class UserService {
 
     public List<User> getListFriend(int userId, int friendId) { //метод получиния списка друзей
         Map<Integer, User> users = inMemoryUserStorage.getUsers();
-        if(users.containsKey(userId) && users.containsKey(friendId)) {
-
+        if(users.containsKey(userId) && users.containsKey(friendId)){
             Set<Integer> listUser = new TreeSet<>(users.get(userId).getFriendVault());
             Set<Integer> listFriend = new TreeSet<>(users.get(friendId).getFriendVault());
             listUser.retainAll(listFriend);
@@ -64,5 +63,4 @@ public class UserService {
         }
         throw new UserIsNotFoundException("Пользователь с данным id не найден.");
     }
-
 }
