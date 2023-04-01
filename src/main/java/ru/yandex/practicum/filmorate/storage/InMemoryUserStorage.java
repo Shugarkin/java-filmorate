@@ -30,7 +30,7 @@ public class InMemoryUserStorage implements UserStorage {
     public User updateUser(User user) {
         userCheck(user);
         userCheckId(user);
-        if(users.containsKey(user.getId())) {
+        if (users.containsKey(user.getId())) {
             log.info("Пользователь с id={} успешно заменен", user.getId());
             user.setFriendVault(new TreeSet<>());
             users.put(user.getId(), user);
@@ -41,7 +41,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     public User getUserForId(int id) {
-        if(users.containsKey(id)) {
+        if (users.containsKey(id)) {
             log.info("Пользователь получен по id.");
             return users.get(id);
         }
@@ -49,13 +49,13 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     public List<User> getFriendsUserForId(Integer id) {
-        if(!users.containsKey(id)) {
+        if (!users.containsKey(id)) {
             throw new UserIsNotFoundException("Пользователь не найден.");
         }
         Set<Integer> userNumberList = users.get(id).getFriendVault();
         List<User> userList = new ArrayList<>();
         for (Integer integer : users.keySet()) {
-            if(userNumberList.contains(integer)) {
+            if (userNumberList.contains(integer)) {
                 userList.add(users.get(integer));
             }
         }
@@ -64,13 +64,13 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     private void userCheck(User user) {
-        if(user.getName() == null || user.getName().isBlank()) {
+        if (user.getName() == null || user.getName().isBlank()) {
             log.info("Имя пользователя не было указанно, по этому использован его логин.");
             user.setName(user.getLogin());
         }
     }
     private void userCheckId(User user) {
-        if(user.getId() < 0) {
+        if (user.getId() < 0) {
             log.info("Попытка добавить пользователя с id меньше нуля");
             throw new ValidationException("id не может быть меньше 0");
         }

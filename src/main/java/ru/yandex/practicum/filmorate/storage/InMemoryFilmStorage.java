@@ -30,7 +30,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     public Film updateFilm(Film film) {
         filmCheckId(film);
-        if(films.containsKey(film.getId())){
+        if (films.containsKey(film.getId())) {
             log.info("Фильм c id={} обновлен в коллекции", film.getId());
             film.setLike(new TreeSet<>());
             films.put(film.getId(), film);
@@ -41,7 +41,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     private void filmCheckId(Film film) {
-        if(film.getId() < 0) {
+        if (film.getId() < 0) {
             log.info("Попытка добавить фильм с id меньше нуля");
             throw new ValidationException("id не может быть меньше 0");
         }
@@ -52,7 +52,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     public Film getFilmForId(int id) {
-        if(!films.containsKey(id)){
+        if (!films.containsKey(id)) {
             throw new FilmIsNotFoundException("Фильм с таким id не найден");
         }
         log.info("Получен фильс с id={}", id);

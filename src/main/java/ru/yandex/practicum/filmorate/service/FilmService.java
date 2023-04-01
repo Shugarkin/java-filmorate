@@ -20,7 +20,7 @@ public class FilmService {
 
     public Film addLike(Integer filmId, Integer userId) {
         Map<Integer, Film> mapFilm = inMemoryFilmStorage.getFilms();
-        if(mapFilm.containsKey(filmId)){
+        if (mapFilm.containsKey(filmId)) {
             mapFilm.get(filmId).getLike().add(userId);
             Film film = mapFilm.get(filmId);
             log.info("Пользователем с id={} поставлен лайк фильму с id={}.", userId, filmId);
@@ -31,7 +31,7 @@ public class FilmService {
 
     public Film deleteLike(Integer filmId, Integer userId) {
         Map<Integer, Film> mapFilm = inMemoryFilmStorage.getFilms();
-        if(mapFilm.containsKey(filmId)) {
+        if (mapFilm.containsKey(filmId)) {
             mapFilm.get(filmId).getLike().remove(userId);
             Film film = mapFilm.get(filmId);
             log.info("Пользователем с id={} был удален лайк с фильма с id={}.", userId, filmId);
@@ -44,8 +44,8 @@ public class FilmService {
         List<Film> list = new ArrayList<>(inMemoryFilmStorage.getAllFilms());
         list.sort((o1, o2) -> o2.getLike().size() - o1.getLike().size());
 
-        if(end == null) {
-            if(list.size() >= 10) {
+        if (end == null) {
+            if (list.size() >= 10) {
                 log.info("Получен список популярных фильмов.");
                 return list.subList(0, 9);
             }

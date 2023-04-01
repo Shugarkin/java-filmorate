@@ -73,17 +73,17 @@ public class FilmController {
         return new ErrorResponse("Ошибка пользователя", e.getMessage());
     }
 
-    private void checkId(Integer id, Integer userId){
-        if(id == null){
+    private void checkId(Integer id, Integer userId) {
+        if (id == null) {
             throw new IncorrectIDException("Параметр id фильма равен null.");
         }
-        if(userId == null){
+        if (userId == null) {
             throw new IncorrectIDException("Параметр id пользователя при добавления лайка равен null.");
         }
-        if(id <= 0){
+        if (id <= 0) {
             throw new IncorrectIDException("Параметр id фильма имеет отрицательное значение.");
         }
-        if(userId <= 0){
+        if (userId <= 0) {
             throw new IncorrectIDException("Параметр id пользователя при добавления лайка имеет отрицательное значение.");
         }
     }
