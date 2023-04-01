@@ -40,7 +40,7 @@ public class FilmService {
         throw new FilmIsNotFoundException("Фильм не найден.");
     }
 
-    public List<Film> getPopularFilms (Integer end) {
+    public List<Film> getPopularFilms(Integer end) {
         List<Film> list = new ArrayList<>(inMemoryFilmStorage.getAllFilms());
         list.sort((o1, o2) -> o2.getLike().size() - o1.getLike().size());
 
