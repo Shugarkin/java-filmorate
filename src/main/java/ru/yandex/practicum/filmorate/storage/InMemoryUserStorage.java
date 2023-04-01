@@ -13,11 +13,14 @@ import java.util.*;
 public class InMemoryUserStorage implements UserStorage {
 
     private int userNextId = 1;
+
     private Map<Integer, User> users = new HashMap<>();
+
     public List<User> getAllUsers() {
         log.info("Коллекция пользователей получена, текущее количество {}.", users.size());
         return new ArrayList<>(users.values());
     }
+
     public User createUser(User user) {
         userCheck(user);
         log.info("Новый пользователь добавлен.");
@@ -69,12 +72,14 @@ public class InMemoryUserStorage implements UserStorage {
             user.setName(user.getLogin());
         }
     }
+
     private void userCheckId(User user) {
         if (user.getId() < 0) {
             log.info("Попытка добавить пользователя с id меньше нуля");
             throw new ValidationException("id не может быть меньше 0");
         }
     }
+
     public Map<Integer, User> getUsers() {
         return users;
     }

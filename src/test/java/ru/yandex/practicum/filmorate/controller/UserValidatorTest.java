@@ -20,9 +20,11 @@ import java.util.Set;
 public class UserValidatorTest {
 
     private Validator validator;
+
     private UserController userController;
 
     private InMemoryUserStorage inMemoryUserStorage;
+
     private UserService userService;
 
     @BeforeEach

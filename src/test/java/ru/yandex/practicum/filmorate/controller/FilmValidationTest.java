@@ -20,6 +20,7 @@ import java.util.Set;
 public class FilmValidationTest {
 
     private Validator validator;
+
     private FilmController filmController;
 
     private InMemoryFilmStorage inMemoryFilmStorage;

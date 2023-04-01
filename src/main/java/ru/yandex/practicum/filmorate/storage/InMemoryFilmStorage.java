@@ -12,6 +12,7 @@ import java.util.*;
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
     private int filmNextId = 1;
+
     private Map<Integer, Film> films = new HashMap();
 
     public List<Film> getAllFilms() {
