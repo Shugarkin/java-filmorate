@@ -22,7 +22,6 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     public User createUser(User user) {
-        userCheck(user);
         log.info("Новый пользователь добавлен.");
         user.setId(userNextId);
         user.setFriendVault(new TreeSet<>());
@@ -31,8 +30,6 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     public User updateUser(User user) {
-        userCheck(user);
-        userCheckId(user);
         if (users.containsKey(user.getId())) {
             log.info("Пользователь с id={} успешно заменен", user.getId());
             user.setFriendVault(new TreeSet<>());
@@ -66,21 +63,17 @@ public class InMemoryUserStorage implements UserStorage {
         return userList;
     }
 
-    private void userCheck(User user) {
-        if (user.getName() == null || user.getName().isBlank()) {
-            log.info("Имя пользователя не было указанно, по этому использован его логин.");
-            user.setName(user.getLogin());
-        }
+    public void addFriend(int userId, int friendId) {
+        users.get(userId).getFriendVault().add(friendId);
+        users.get(friendId).getFriendVault().add(userId);
     }
 
-    private void userCheckId(User user) {
-        if (user.getId() < 0) {
-            log.info("Попытка добавить пользователя с id меньше нуля");
-            throw new ValidationException("id не может быть меньше 0");
-        }
+    public Map<Integer, User> getMapUsers() {
+        return new HashMap<>(users);
     }
 
-    public Map<Integer, User> getUsers() {
-        return users;
+    public void deleteFriend(int userId, int friendId) {
+        users.get(userId).getFriendVault().remove(friendId);
+        users.get(friendId).getFriendVault().remove(userId);
     }
 }

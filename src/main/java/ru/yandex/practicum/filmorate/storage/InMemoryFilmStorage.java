@@ -30,7 +30,6 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     public Film updateFilm(Film film) {
-        filmCheckId(film);
         if (films.containsKey(film.getId())) {
             log.info("Фильм c id={} обновлен в коллекции", film.getId());
             film.setLike(new TreeSet<>());
@@ -41,22 +40,23 @@ public class InMemoryFilmStorage implements FilmStorage {
         throw new ValidationException("Фильма с данным id нет");
     }
 
-    private void filmCheckId(Film film) {
-        if (film.getId() < 0) {
-            log.info("Попытка добавить фильм с id меньше нуля");
-            throw new ValidationException("id не может быть меньше 0");
-        }
-    }
-
-    public Map<Integer, Film> getFilms() {
-        return films;
-    }
-
     public Film getFilmForId(int id) {
         if (!films.containsKey(id)) {
             throw new FilmIsNotFoundException("Фильм с таким id не найден");
         }
         log.info("Получен фильс с id={}", id);
         return films.get(id);
+    }
+
+    public Map<Integer, Film> getMapFilms() {
+        return new HashMap<>(films);
+    }
+
+    public void addLike(Integer filmId, Integer userId) {
+        films.get(filmId).getLike().add(userId);
+    }
+
+    public void deleteLike(Integer filmId, Integer userId) {
+        films.get(filmId).getLike().remove(userId);
     }
 }

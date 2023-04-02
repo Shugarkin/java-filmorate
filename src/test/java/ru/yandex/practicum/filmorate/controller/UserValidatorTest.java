@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -14,6 +15,7 @@ import javax.validation.ValidatorFactory;
 import javax.validation.Validator;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @SpringBootApplication
@@ -23,7 +25,7 @@ public class UserValidatorTest {
 
     private UserController userController;
 
-    private InMemoryUserStorage inMemoryUserStorage;
+    private UserStorage inMemoryUserStorage;
 
     private UserService userService;
 
@@ -33,7 +35,7 @@ public class UserValidatorTest {
         validator = factory.getValidator();
         inMemoryUserStorage = new InMemoryUserStorage();
         userService = new UserService(inMemoryUserStorage);
-        userController = new UserController(inMemoryUserStorage, userService);
+        userController = new UserController(userService);
     }
 
     @Test

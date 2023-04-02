@@ -6,8 +6,10 @@ import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -15,6 +17,7 @@ import javax.validation.ValidatorFactory;
 import javax.validation.Validator;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public class FilmValidationTest {
@@ -23,11 +26,11 @@ public class FilmValidationTest {
 
     private FilmController filmController;
 
-    private InMemoryFilmStorage inMemoryFilmStorage;
+    private FilmStorage inMemoryFilmStorage;
 
     private FilmService filmService;
 
-    private InMemoryUserStorage inMemoryUserStorage;
+    private UserStorage inMemoryUserStorage;
 
     @BeforeEach
     public void setUp() {
@@ -36,7 +39,7 @@ public class FilmValidationTest {
         inMemoryUserStorage = new InMemoryUserStorage();
         inMemoryFilmStorage = new InMemoryFilmStorage();
         filmService = new FilmService(inMemoryFilmStorage);
-        filmController = new FilmController(inMemoryFilmStorage, filmService);
+        filmController = new FilmController(filmService);
     }
 
     @Test
