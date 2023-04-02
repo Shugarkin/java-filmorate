@@ -15,7 +15,6 @@ import javax.validation.ValidatorFactory;
 import javax.validation.Validator;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @SpringBootApplication
