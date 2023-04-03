@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.storage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import ru.yandex.practicum.filmorate.exception.FilmIsNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import javax.validation.ValidationException;
 import java.util.*;
@@ -40,12 +39,9 @@ public class InMemoryFilmStorage implements FilmStorage {
         throw new ValidationException("Фильма с данным id нет");
     }
 
-    public Film getFilmForId(int id) {
-        if (!films.containsKey(id)) {
-            throw new FilmIsNotFoundException("Фильм с таким id не найден");
-        }
-        log.info("Получен фильс с id={}", id);
-        return films.get(id);
+    public Optional<Film> getFilmForId(int id) {
+        log.info("Получен фильм с id={}", id);
+        return Optional.ofNullable(films.get(id));
     }
 
     public Map<Integer, Film> getMapFilms() {

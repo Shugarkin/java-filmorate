@@ -8,14 +8,13 @@ import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
-    private UserService userService;
+    private final UserService userService;
 
     @Autowired
     public UserController(UserService userService) {
@@ -57,9 +56,8 @@ public class UserController {
 
     @GetMapping("/{id}") //геттер по айди
     public User getUserForId(@PathVariable int id) {
-        Optional<Integer> newId = Optional.of(id);
-        checkUserId(newId.get());
-        return userService.getUserForId(newId);
+        checkUserId(id);
+        return userService.getUserForId(id);
     }
 
     @GetMapping("/{id}/friends")//получение списка друзей пользователя

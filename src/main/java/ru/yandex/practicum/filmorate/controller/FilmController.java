@@ -10,13 +10,13 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/films")
+@Validated
 public class FilmController {
 
-    private FilmService filmService;
+    private final FilmService filmService;
 
     @Autowired
     public FilmController(FilmService filmService) {
@@ -58,8 +58,7 @@ public class FilmController {
 
     @GetMapping("/{id}") //получение фильма по айди
     public Film getFilmForId(@PathVariable("id") int id) {
-        Optional<Integer> newId = Optional.of(id);
-        return filmService.getFilmForId(newId);
+        return filmService.getFilmForId(id);
     }
 
     private void checkId(Integer id, Integer userId) {

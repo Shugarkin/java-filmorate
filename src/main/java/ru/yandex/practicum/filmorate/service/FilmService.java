@@ -60,9 +60,8 @@ public class FilmService {
         return inMemoryFilmStorage.updateFilm(film);
     }
 
-    public Film getFilmForId(Optional<Integer> id) {
-        int newId = id.orElseThrow(() -> new ValidationException("При получении id пришел null"));
-        return inMemoryFilmStorage.getFilmForId(newId);
+    public Film getFilmForId(int id) {
+        return inMemoryFilmStorage.getFilmForId(id).orElseThrow(() -> new ValidationException("При получении id пришел null"));
     }
 
 }

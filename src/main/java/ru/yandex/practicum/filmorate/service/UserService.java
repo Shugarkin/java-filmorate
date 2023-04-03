@@ -47,27 +47,15 @@ public class UserService {
         throw new UserIsNotFoundException("Пользователь с данным id не найден.");
     }
 
-    public List<User> getListFriend(int userId, int friendId) { //метод получиния списка друзей
-        Set<Integer> listUser = inMemoryUserStorage.getAllUsers().stream()
-                .filter(user -> user.getId() == userId)
-                .flatMap(user -> user.getFriendVault().stream())
-                .collect(Collectors.toSet());
+    public List<User> getListFriend(int userId, int friendId) { //метод получения списка друзей
+        User user = getUserForId(userId);
+        User friend = getUserForId(friendId);
 
-        Set<Integer> listFriend =  inMemoryUserStorage.getAllUsers().stream()
-                .filter(user -> user.getId() == friendId)
-                .flatMap(user -> user.getFriendVault().stream())
-                .collect(Collectors.toSet());
+        List<User> listUser = user.getFriendVault().stream()
+                .filter(friend.getFriendVault()::contains)
+                .map(this::getUserForId).collect(Collectors.toList());
 
-        listUser.retainAll(listFriend);
-
-        if (!listUser.isEmpty()) {
-            log.info("Показанны общие друзья пользователей с id {} и id {}. ", userId, friendId);
-            return inMemoryUserStorage.getAllUsers().stream()
-                    .filter(user -> listUser.contains(user.getId()))
-                    .collect(Collectors.toList());
-        } else {
-            return List.of();
-        }
+        return listUser;
     }
 
     public List<User> getAllUsers() {
@@ -84,9 +72,8 @@ public class UserService {
         return inMemoryUserStorage.updateUser(user);
     }
 
-    public User getUserForId(Optional<Integer> id) {
-        int newId = id.orElseThrow(() -> new ValidationException("При получении id пришел null"));
-        return inMemoryUserStorage.getUserForId(newId);
+    public User getUserForId(int id) {
+        return inMemoryUserStorage.getUserForId(id).orElseThrow(() -> new ValidationException("При получении id пришел null"));
     }
 
     public List<User> getFriendsUserForId(Integer id) {

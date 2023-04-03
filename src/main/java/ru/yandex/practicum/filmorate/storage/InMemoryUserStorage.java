@@ -40,12 +40,9 @@ public class InMemoryUserStorage implements UserStorage {
         throw new ValidationException("Пользователя с данным id нет.");
     }
 
-    public User getUserForId(int id) {
-        if (users.containsKey(id)) {
-            log.info("Пользователь получен по id.");
-            return users.get(id);
-        }
-        throw new UserIsNotFoundException("Пользователь не найден.");
+    public Optional<User> getUserForId(int id) {
+        log.info("Получен пользователь с id={}", id);
+        return Optional.ofNullable(users.get(id));
     }
 
     public List<User> getFriendsUserForId(Integer id) {
