@@ -1,7 +1,5 @@
 package ru.yandex.practicum.filmorate.validator;
 
-import ru.yandex.practicum.filmorate.validator.ReleaseDate;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.time.LocalDate;
@@ -17,7 +15,7 @@ public class ReleaseDateConstraintValidator implements ConstraintValidator<Relea
 
     @Override
     public boolean isValid(LocalDate releaseDate, ConstraintValidatorContext cxt) {
-        if(releaseDate == null) {
+        if (releaseDate == null) {
             return false;
         }
         return releaseDate.isAfter(DAYX);

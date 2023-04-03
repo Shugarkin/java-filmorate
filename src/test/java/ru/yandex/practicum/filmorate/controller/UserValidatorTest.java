@@ -3,25 +3,38 @@ package ru.yandex.practicum.filmorate.controller;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.ValidatorFactory;
 import javax.validation.Validator;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
+@SpringBootApplication
 public class UserValidatorTest {
 
     private Validator validator;
+
     private UserController userController;
+
+    private UserStorage inMemoryUserStorage;
+
+    private UserService userService;
 
     @BeforeEach
     public void setUp() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
-        userController = new UserController();
+        inMemoryUserStorage = new InMemoryUserStorage();
+        userService = new UserService(inMemoryUserStorage);
+        userController = new UserController(userService);
     }
 
     @Test
@@ -94,12 +107,38 @@ public class UserValidatorTest {
         Set<ConstraintViolation<User>> violation6 = validator.validate(user6);
         Assertions.assertFalse(violation6.isEmpty());
 
-        User user7 = User.builder()
+        User user7 = User.builder() //проверка отсутствия имени
                 .email("test@user.ru")
                 .login("testUser")
                 .birthday(LocalDate.of(1993, 03, 25))
                 .build();
         userController.createUser(user7);
-        Assertions.assertEquals(user1.getName(), user1.getLogin());
+        Assertions.assertEquals(user7.getName(), user7.getLogin());
+
+        userController.getUserForId(1); // проверка на геттер
+        Assertions.assertEquals(user7, userController.getUserForId(1));
+
+        User user8 = User.builder()
+                .email("test@user.ru")
+                .login("testUser")
+                .name("TestUser")
+                .birthday(LocalDate.of(1993, 03, 25))
+                .build();
+        userController.createUser(user8);
+
+        userController.userAddFriend(1, 2);
+        boolean answer = user7.getFriendVault().isEmpty();
+        Assertions.assertEquals(answer, false); //проверка на добавление в друзья
+
+        userController.userDeleteFriend(1,2);
+        boolean answer1 = user7.getFriendVault().isEmpty();
+        Assertions.assertEquals(answer1, true); //проверка на удаление из друзей
+
+        userController.userAddFriend(1, 2);
+        boolean answer2 = userController.getListFriend(1, 2).isEmpty();
+        Assertions.assertEquals(answer2, true); //проверка на общих друзей
+
+        List<User> list = userController.getFriendsUserForId(1);
+        Assertions.assertEquals(list, List.of(user8)); //проверка на получение друзей пользователя
     }
 }
