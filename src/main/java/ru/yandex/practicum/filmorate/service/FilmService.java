@@ -3,65 +3,94 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dao.FilmDbStorage;
 import ru.yandex.practicum.filmorate.exception.FilmIsNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class FilmService {
     private FilmStorage inMemoryFilmStorage;
 
+    private FilmDbStorage filmDbStorage;
+
     @Autowired
-    public FilmService(FilmStorage inMemoryFilmStorage) {
+    public FilmService(FilmStorage inMemoryFilmStorage, FilmDbStorage filmDbStorage) {
         this.inMemoryFilmStorage = inMemoryFilmStorage;
+        this.filmDbStorage = filmDbStorage;
     }
 
-    public Film addLike(Integer filmId, Integer userId) {
-        Map<Integer, Film> mapFilm = inMemoryFilmStorage.getMapFilms();
-        if (mapFilm.containsKey(filmId)) {
-            inMemoryFilmStorage.addLike(filmId, userId);
-            Film film = mapFilm.get(filmId);
-            log.info("Пользователем с id={} поставлен лайк фильму с id={}.", userId, filmId);
-            return film;
-        }
-        throw new FilmIsNotFoundException("Фильм не найден.");
+    public Optional<Film> addLike(Integer filmId, Integer userId) {
+//        Map<Integer, Film> mapFilm = inMemoryFilmStorage.getMapFilms();
+//        if (mapFilm.containsKey(filmId)) {
+//            inMemoryFilmStorage.addLike(filmId, userId);
+//            Film film = mapFilm.get(filmId);
+//            log.info("Пользователем с id={} поставлен лайк фильму с id={}.", userId, filmId);
+//            return film;
+//        }
+//        throw new FilmIsNotFoundException("Фильм не найден.");
+        return filmDbStorage.addLike(filmId, userId);
     }
 
     public Film deleteLike(Integer filmId, Integer userId) {
-        Map<Integer, Film> mapFilm = inMemoryFilmStorage.getMapFilms();
-        if (mapFilm.containsKey(filmId)) {
-            inMemoryFilmStorage.deleteLike(filmId, userId);
-            Film film = mapFilm.get(filmId);
-            log.info("Пользователем с id={} был удален лайк с фильма с id={}.", userId, filmId);
-            return film;
-        }
-        throw new FilmIsNotFoundException("Фильм не найден.");
+//        Map<Integer, Film> mapFilm = inMemoryFilmStorage.getMapFilms();
+//        if (mapFilm.containsKey(filmId)) {
+//            inMemoryFilmStorage.deleteLike(filmId, userId);
+//            Film film = mapFilm.get(filmId);
+//            log.info("Пользователем с id={} был удален лайк с фильма с id={}.", userId, filmId);
+//            return film;
+//        }
+//        throw new FilmIsNotFoundException("Фильм не найден.");
+        return null;
     }
 
-    public List<Film> getPopularFilms(Integer end) {
+    public List<Optional<Film>> getPopularFilms(Integer end) {
         log.info("Получен список популярных фильмов колличесвом {} фильмов.", end);
-        return inMemoryFilmStorage.getAllFilms().stream()
-                .sorted((o1, o2) -> o2.getLike().size() - o1.getLike().size()).limit(end).collect(Collectors.toList());
+        return filmDbStorage.getPopularFilms(end);
     }
 
-    public List<Film> getAllFilms() {
-        return inMemoryFilmStorage.getAllFilms();
+    public List<Optional<Film>> getAllFilms() {
+        return filmDbStorage.getAllFilms();
     }
+
+//    public List<Film> getAllFilms() {
+//        return inMemoryFilmStorage.getAllFilms();
+//    }
 
     public Film createFilms(Film film) {
-        return inMemoryFilmStorage.createFilms(film);
+        return filmDbStorage.createFilms(film);
     }
 
     public Film updateFilm(Film film) {
-        return inMemoryFilmStorage.updateFilm(film);
+        return filmDbStorage.updateFilm(film);
     }
+
+//    public Film getFilmForId(int id) {
+//        return inMemoryFilmStorage.getFilmForId(id).orElseThrow(() -> new ValidationException("При получении id пришел null"));
+//    }
 
     public Film getFilmForId(int id) {
-        return inMemoryFilmStorage.getFilmForId(id).orElseThrow(() -> new ValidationException("При получении id пришел null"));
+        return filmDbStorage.getFilmForId(id).orElseThrow(() -> new FilmIsNotFoundException("При получении id пришел null"));
     }
 
+    public List<Genre> getGenre() {
+        return filmDbStorage.getGenreList();
+    }
+
+    public Genre getGenreById(Integer id) {
+        return filmDbStorage.getGenre(id);
+    }
+
+    public List<Mpa> getMpa() {
+        return filmDbStorage.getMpaList();
+    }
+
+    public Mpa getMpaById(Integer id) {
+        return filmDbStorage.getMpaByid(id);
+    }
 }

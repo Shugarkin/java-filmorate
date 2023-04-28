@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/films")
@@ -18,13 +19,15 @@ public class FilmController {
 
     private final FilmService filmService;
 
+
+
     @Autowired
     public FilmController(FilmService filmService) {
         this.filmService = filmService;
     }
 
     @GetMapping
-    public List<Film> getAllFilms() { //получение все фильмов
+    public List<Optional<Film>> getAllFilms() { //получение все фильмов
         return filmService.getAllFilms();
     }
 
@@ -39,7 +42,7 @@ public class FilmController {
     }
 
     @PutMapping("/{id}/like/{userId}") //добавление лайка
-    public Film addLike(@PathVariable("id") Integer id, @PathVariable("userId") Integer userId) {
+    public Optional<Film> addLike(@PathVariable("id") Integer id, @PathVariable("userId") Integer userId) {
         checkId(id, userId);
         return filmService.addLike(id, userId);
     }
@@ -52,7 +55,7 @@ public class FilmController {
 
     @GetMapping("/popular") //список популярных фильмов
     @Validated
-    public List<Film> getPopularFilms(@Positive @RequestParam(defaultValue = "10") Integer count) {
+    public List<Optional<Film>> getPopularFilms(@Positive @RequestParam(defaultValue = "10") Integer count) {
         return filmService.getPopularFilms(count);
     }
 

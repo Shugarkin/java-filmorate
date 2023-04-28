@@ -8,20 +8,22 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.validation.ConstraintViolationException;
+import java.sql.SQLException;
 
 @RestControllerAdvice("ru.yandex.practicum.filmorate.controller")
 @Slf4j
 public class HandlerException {
 
-    @ExceptionHandler({FilmIsNotFoundException.class, UserIsNotFoundException.class, IncorrectIDException.class, ValidationException.class})
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleUserIncorrect(final RuntimeException e) {
-        log.warn("Ошибка пользователя.");
-        return new ErrorResponse("Ошибка пользователя", e.getMessage());
-    }
+//    @ExceptionHandler({FilmIsNotFoundException.class, UserIsNotFoundException.class,
+//            IncorrectIDException.class, ValidationException.class})
+//    @ResponseStatus(HttpStatus.NOT_FOUND)
+//    public ErrorResponse handleUserIncorrect(final RuntimeException e) {
+//        log.warn("Ошибка пользователя.");
+//        return new ErrorResponse("Ошибка пользователя", e.getMessage());
+//    }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse serverError(final Throwable e) {
         log.warn("Неизвестная ошибка.");
         return new ErrorResponse("Что-то пошло не так(", e.getMessage());

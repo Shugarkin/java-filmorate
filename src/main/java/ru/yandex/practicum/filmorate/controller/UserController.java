@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -22,7 +23,7 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> getAllUsers() { //геттер для пользователей
+    public List<Optional<User>> getAllUsers() { //геттер для пользователей
         return userService.getAllUsers();
     }
 
@@ -37,7 +38,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}/friends/{friendId}") //добавление в друзья
-    public User userAddFriend(@PathVariable("id") final Integer userId, @PathVariable("friendId") final Integer friendId) {
+    public Optional<User> userAddFriend(@PathVariable("id") final Integer userId, @PathVariable("friendId") final Integer friendId) {
         checkIdUserAndFriend(userId, friendId);
         return userService.userAddFriend(userId, friendId);
     }
@@ -49,7 +50,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")//геттер для списка общих друзей
-    public List<User> getListFriend(@PathVariable("id") final Integer userId, @PathVariable("otherId") final Integer friendId) {
+    public List<Optional<User>> getListFriend(@PathVariable("id") final Integer userId, @PathVariable("otherId") final Integer friendId) {
         checkIdUserAndFriend(userId, friendId);
         return userService.getListFriend(userId, friendId);
     }
@@ -61,7 +62,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}/friends")//получение списка друзей пользователя
-    public List<User> getFriendsUserForId(@PathVariable("id") Integer id) {
+    public List<Optional<User>> getFriendsUserForId(@PathVariable("id") Integer id) {
         checkUserId(id);
         return userService.getFriendsUserForId(id);
     }
