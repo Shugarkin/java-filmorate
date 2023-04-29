@@ -22,7 +22,7 @@ class UserApplicationTests {
 
     @Autowired
     private final UserStorage userStorage;
-    
+
     private final FriendshipStorage friendshipStorage;
 
     private User newUser;
