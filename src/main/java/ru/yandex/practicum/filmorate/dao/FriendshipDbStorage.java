@@ -59,7 +59,7 @@ public class FriendshipDbStorage implements FriendshipStorage {
                 " WHERE friend_id in (SELECT friend_id " +
                 " FROM USER_FRIEND " +
                 " WHERE USER_ID = ?) " +
-                " AND USER_ID = ?) " ;
+                " AND USER_ID = ?); ";
 
         List<User> list = jdbcTemplate.query(ahaha, this::getFriend, friendId, userId);
         return list;
