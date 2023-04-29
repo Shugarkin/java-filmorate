@@ -4,8 +4,6 @@ create table IF NOT EXISTS MPA
     MPA_NAME CHARACTER VARYING not null
 );
 
-
-
 create table IF NOT EXISTS FILMS
 (
     FILM_ID      INTEGER auto_increment,
@@ -19,8 +17,6 @@ create table IF NOT EXISTS FILMS
     constraint FILMS_RATING_MPA_ID_FK
     foreign key (MPA_ID) references MPA(MPA_ID)
     );
-
-
 
 create table IF NOT EXISTS GENRE
 (
