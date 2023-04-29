@@ -28,6 +28,7 @@ class UserApplicationTests {
     private User newUser;
 
     private User userFriend;
+
     @BeforeEach
     public void setUp() {
          newUser = userStorage.createUser(User.builder() //создание пользователя

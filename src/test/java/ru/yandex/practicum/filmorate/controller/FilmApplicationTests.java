@@ -21,11 +21,13 @@ import java.util.Optional;
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 class FilmApplicationTests {
+
     private final FilmStorage filmStorage;
 
     private final LikeStorage likeStorage;
 
     private Film newFilm;
+
     @BeforeEach
     public void setUp() {
         newFilm = filmStorage.createFilms(Film.builder() //создали фильм
