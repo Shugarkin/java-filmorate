@@ -10,43 +10,32 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+
 import java.util.*;
 
 @Service
 @Slf4j
 public class FilmService {
-    private FilmStorage inMemoryFilmStorage;
 
-    private FilmDbStorage filmDbStorage;
+    private FilmStorage filmDbStorage;
 
     @Autowired
-    public FilmService(FilmStorage inMemoryFilmStorage, FilmDbStorage filmDbStorage) {
-        this.inMemoryFilmStorage = inMemoryFilmStorage;
+    public FilmService(FilmDbStorage filmDbStorage) {
         this.filmDbStorage = filmDbStorage;
     }
 
-    public Optional<Film> addLike(Integer filmId, Integer userId) {
-//        Map<Integer, Film> mapFilm = inMemoryFilmStorage.getMapFilms();
-//        if (mapFilm.containsKey(filmId)) {
-//            inMemoryFilmStorage.addLike(filmId, userId);
-//            Film film = mapFilm.get(filmId);
-//            log.info("Пользователем с id={} поставлен лайк фильму с id={}.", userId, filmId);
-//            return film;
-//        }
-//        throw new FilmIsNotFoundException("Фильм не найден.");
-        return filmDbStorage.addLike(filmId, userId);
+    public void addLike(Integer filmId, Integer userId) {
+        if(userId < 0 ) {
+            throw new ValidationException("id пользователя должен быть положительным");
+        }
+        filmDbStorage.addLike(filmId, userId);
     }
 
-    public Film deleteLike(Integer filmId, Integer userId) {
-//        Map<Integer, Film> mapFilm = inMemoryFilmStorage.getMapFilms();
-//        if (mapFilm.containsKey(filmId)) {
-//            inMemoryFilmStorage.deleteLike(filmId, userId);
-//            Film film = mapFilm.get(filmId);
-//            log.info("Пользователем с id={} был удален лайк с фильма с id={}.", userId, filmId);
-//            return film;
-//        }
-//        throw new FilmIsNotFoundException("Фильм не найден.");
-        return null;
+    public void deleteLike(Integer filmId, Integer userId) {
+        if(userId < 0 ) {
+            throw new ValidationException("id пользователя должен быть положительным");
+        }
+        filmDbStorage.deleteLike(filmId, userId);
     }
 
     public List<Optional<Film>> getPopularFilms(Integer end) {
@@ -58,21 +47,13 @@ public class FilmService {
         return filmDbStorage.getAllFilms();
     }
 
-//    public List<Film> getAllFilms() {
-//        return inMemoryFilmStorage.getAllFilms();
-//    }
-
-    public Film createFilms(Film film) {
+    public Optional<Film> createFilms(Film film) {
         return filmDbStorage.createFilms(film);
     }
 
-    public Film updateFilm(Film film) {
+    public Optional<Film> updateFilm(Film film) {
         return filmDbStorage.updateFilm(film);
     }
-
-//    public Film getFilmForId(int id) {
-//        return inMemoryFilmStorage.getFilmForId(id).orElseThrow(() -> new ValidationException("При получении id пришел null"));
-//    }
 
     public Film getFilmForId(int id) {
         return filmDbStorage.getFilmForId(id).orElseThrow(() -> new FilmIsNotFoundException("При получении id пришел null"));
@@ -91,6 +72,6 @@ public class FilmService {
     }
 
     public Mpa getMpaById(Integer id) {
-        return filmDbStorage.getMpaByid(id);
+        return filmDbStorage.getMpaById(id);
     }
 }

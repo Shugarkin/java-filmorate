@@ -14,8 +14,6 @@ create table IF NOT EXISTS FILMS
     RELEASE_DATE TIMESTAMP         not null,
     DURATION     INTEGER           not null,
     MPA_ID       INTEGER,
-    GENRE_ID     CHARACTER VARYING,
-    LIKES    CHARACTER VARYING,
     constraint FILMS_PK
     PRIMARY KEY  (FILM_ID),
     constraint FILMS_RATING_MPA_ID_FK
@@ -47,7 +45,6 @@ create table IF NOT EXISTS USERS
     LOGIN    CHARACTER VARYING not null,
     BIRTHDAY TIMESTAMP         not null,
     USERNAME CHARACTER VARYING not null,
-    FRIENDSHIP CHARACTER VARYING,
     constraint USER_PK
     PRIMARY KEY  (USER_ID)
     );

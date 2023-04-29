@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.IncorrectIDException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
@@ -19,8 +18,6 @@ public class FilmController {
 
     private final FilmService filmService;
 
-
-
     @Autowired
     public FilmController(FilmService filmService) {
         this.filmService = filmService;
@@ -32,25 +29,23 @@ public class FilmController {
     }
 
     @PostMapping
-    public Film createFilms(@Valid @RequestBody Film film) { //создание фильма
+    public Optional<Film> createFilms(@Valid @RequestBody Film film) { //создание фильма
         return filmService.createFilms(film);
     }
 
     @PutMapping
-    public Film updateFilm(@Valid @RequestBody Film film) { //обновление фильма
+    public Optional<Film> updateFilm(@Valid @RequestBody Film film) { //обновление фильма
        return filmService.updateFilm(film);
     }
 
     @PutMapping("/{id}/like/{userId}") //добавление лайка
-    public Optional<Film> addLike(@PathVariable("id") Integer id, @PathVariable("userId") Integer userId) {
-        checkId(id, userId);
-        return filmService.addLike(id, userId);
+    public void addLike(@PathVariable("id") Integer id, @PathVariable("userId") Integer userId) {
+        filmService.addLike(id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}") //удаление лайка
-    public Film deleteLike(@PathVariable("id") Integer id, @PathVariable("userId") Integer userId) {
-        checkId(id, userId);
-        return filmService.deleteLike(id, userId);
+    public void deleteLike(@PathVariable("id") Integer id, @PathVariable("userId") Integer userId) {
+        filmService.deleteLike(id, userId);
     }
 
     @GetMapping("/popular") //список популярных фильмов
@@ -62,14 +57,5 @@ public class FilmController {
     @GetMapping("/{id}") //получение фильма по айди
     public Film getFilmForId(@PathVariable("id") int id) {
         return filmService.getFilmForId(id);
-    }
-
-    private void checkId(Integer id, Integer userId) {
-        if (id <= 0) {
-            throw new IncorrectIDException("Параметр id фильма имеет отрицательное значение.");
-        }
-        if (userId <= 0) {
-            throw new IncorrectIDException("Параметр id пользователя при добавления лайка имеет отрицательное значение.");
-        }
     }
 }
