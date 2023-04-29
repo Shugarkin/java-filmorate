@@ -25,14 +25,14 @@ public class FilmService {
     }
 
     public void addLike(Integer filmId, Integer userId) {
-        if(userId < 0 ) {
+        if (userId < 0) {
             throw new ValidationException("id пользователя должен быть положительным");
         }
         filmDbStorage.addLike(filmId, userId);
     }
 
     public void deleteLike(Integer filmId, Integer userId) {
-        if(userId < 0 ) {
+        if (userId < 0) {
             throw new ValidationException("id пользователя должен быть положительным");
         }
         filmDbStorage.deleteLike(filmId, userId);
