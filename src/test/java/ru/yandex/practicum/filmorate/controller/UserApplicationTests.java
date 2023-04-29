@@ -25,6 +25,7 @@ class UserApplicationTests {
     public void contexTest() {
         Assertions.assertThat(userStorage).isNotNull();
     }
+
     @Test
     public void users() {
         Optional<User> newUser = userStorage.createUser(User.builder() //создание пользователя
@@ -121,4 +122,5 @@ class UserApplicationTests {
                     );
         }
     }
+
 } 
