@@ -42,8 +42,8 @@ class FilmApplicationTests {
 
     @Test
     public void createFilm() {
-        Film film = filmStorage.createFilms(Film.
-                builder() //создали фильм
+        Film film = filmStorage.createFilms(Film
+                .builder() //создали фильм
                 .name("ndbadbjwdmod")
                 .description("adiewqhebhwb eking")
                 .duration(100)
