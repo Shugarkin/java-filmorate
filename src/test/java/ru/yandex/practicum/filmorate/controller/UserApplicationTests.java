@@ -111,9 +111,9 @@ class UserApplicationTests {
         userStorage.addFriend(1, 2); //добавлив друзья 2го к 1му
         userStorage.addFriend(3, 2); //добавлив друзья 2го к 3му
 
-        List<Optional<User>> ListFriend = userStorage.getListFriend(1, 3); //проверяем что 2й в листе друзей у 1го и 3го
+        List<Optional<User>> listFriend = userStorage.getListFriend(1, 3); //проверяем что 2й в листе друзей у 1го и 3го
 
-        for (Optional<User> userOptional2 : ListFriend) {
+        for (Optional<User> userOptional2 : listFriend) {
             Assertions.assertThat(userOptional2)
                     .isPresent()
                     .hasValueSatisfying(user1 ->
