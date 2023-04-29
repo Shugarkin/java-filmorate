@@ -25,8 +25,8 @@ public class UserDbStorage implements UserStorage {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public UserDbStorage(JdbcTemplate jdbcTemplate){
-        this.jdbcTemplate=jdbcTemplate;
+    public UserDbStorage(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
@@ -37,7 +37,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public Optional<User> createUser(User user) {
-        if(user.getName().isBlank()) {
+        if (user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
         String sqlQuery = "insert into USERS ( EMAIL, LOGIN, BIRTHDAY, USERNAME) " +
@@ -58,7 +58,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public Optional<User> updateUser(User user) {
-        if(getUserForId(user.getId()) == null)  {
+        if (getUserForId(user.getId()) == null)  {
             throw new UserIsNotFoundException("Пользователя такого нету((");
         }
         String sqlQuery = "update USERS set " +
@@ -75,7 +75,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public void addFriend(int userId, int friendId) {
-        if(getUserForId(userId) == null || getUserForId(friendId) == null) {
+        if (getUserForId(userId) == null || getUserForId(friendId) == null) {
             throw new UserIsNotFoundException("Пользователя такого нету((");
         }
         String sqlQuery = "insert into USER_FRIEND (USER_ID, FRIEND_ID) " +
@@ -91,9 +91,9 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public Optional<User> getUserForId(int id) {
-            String sqlQuery = "select USER_ID, EMAIL, LOGIN, BIRTHDAY, USERNAME " +
-                    "from USERS where USER_ID = ?";
-            return jdbcTemplate.queryForObject(sqlQuery, this::findUserById, id);
+        String sqlQuery = "select USER_ID, EMAIL, LOGIN, BIRTHDAY, USERNAME " +
+                "from USERS where USER_ID = ?";
+        return jdbcTemplate.queryForObject(sqlQuery, this::findUserById, id);
     }
 
     @Override

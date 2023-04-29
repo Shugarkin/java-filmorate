@@ -22,8 +22,8 @@ public class FilmDbStorage implements FilmStorage {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public FilmDbStorage(JdbcTemplate jdbcTemplate){
-        this.jdbcTemplate=jdbcTemplate;
+    public FilmDbStorage(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
@@ -51,7 +51,7 @@ public class FilmDbStorage implements FilmStorage {
         }, keyHolder);
         film.setId(keyHolder.getKey().intValue());
 
-        if(film.getGenres() != null) {
+        if (film.getGenres() != null) {
             addGenre(film);
         }
 
@@ -68,11 +68,11 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Optional<Film> updateFilm(Film film) {
-        if(getFilmForId(film.getId()) == null) {
+        if (getFilmForId(film.getId()) == null) {
             throw new FilmIsNotFoundException("Нет такого фильма");
         }
 
-        if(film.getGenres() != null) {
+        if (film.getGenres() != null) {
             addGenre(film);
         }
 
@@ -112,13 +112,13 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public List<Genre> getGenreList () {
+    public List<Genre> getGenreList() {
         String genre = "select * from GENRE ";
         return jdbcTemplate.query(genre, this::findGenre);
     }
 
     @Override
-    public Genre getGenre (int id) {
+    public Genre getGenre(int id) {
         String genre = "select * from GENRE where GENRE_ID = ?";
         return jdbcTemplate.queryForObject(genre, this::findGenre, id);
     }
@@ -160,7 +160,7 @@ public class FilmDbStorage implements FilmStorage {
         return filmList;
     }
 
-    private Integer findGenreId (ResultSet resultSet, int rowNum) throws SQLException {
+    private Integer findGenreId(ResultSet resultSet, int rowNum) throws SQLException {
         return resultSet.getInt("GENRE_ID");
     }
 
@@ -202,7 +202,7 @@ public class FilmDbStorage implements FilmStorage {
                 .build());
     }
 
-    private Genre findGenre (ResultSet resultSet, int rowNum) throws SQLException {
+    private Genre findGenre(ResultSet resultSet, int rowNum) throws SQLException {
         return Genre.builder()
                 .id(resultSet.getInt("GENRE_ID"))
                 .name(resultSet.getString("GENRE_NAME"))
