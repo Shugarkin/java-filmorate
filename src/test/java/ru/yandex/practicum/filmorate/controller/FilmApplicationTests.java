@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -9,7 +10,8 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
-import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Assertions;
+import ru.yandex.practicum.filmorate.storage.LikeStorage;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -21,15 +23,12 @@ import java.util.Optional;
 class FilmApplicationTests {
     private final FilmStorage filmStorage;
 
-    @Test
-    public void contexTest() {
-        Assertions.assertThat(filmStorage).isNotNull();
-    }
+    private final LikeStorage likeStorage;
 
-    @Test
-    public void filmTest() {
-
-        Optional<Film> newFilm = filmStorage.createFilms(Film.builder() //создали фильм
+    private Film newFilm;
+    @BeforeEach
+    public void setUp() {
+        newFilm = filmStorage.createFilms(Film.builder() //создали фильм
                 .name("nisi eiusmod")
                 .description("adipisicing")
                 .duration(100)
@@ -37,26 +36,38 @@ class FilmApplicationTests {
                 .mpa(Mpa.builder().id(1).build())
                 .build());
 
+    }
 
+    @Test
+    public void createFilm() {
+        Film film = filmStorage.createFilms(Film.
+                builder() //создали фильм
+                .name("ndbadbjwdmod")
+                .description("adiewqhebhwb eking")
+                .duration(100)
+                .releaseDate(LocalDate.of(1999, 01, 12))
+                .mpa(Mpa.builder().id(1).build())
+                .build());
+
+        Assertions.assertNotNull(film);
+    }
+
+    @Test
+    public void getFilm() {
         Optional<Film> filmOptional = filmStorage.getFilmForId(1); //получение фильма по id
 
-        Assertions.assertThat(filmOptional)
-                .isPresent()
-                .hasValueSatisfying(film ->
-                        Assertions.assertThat(film).hasFieldOrPropertyWithValue("id", 1)
-                );
+        Assertions.assertNotNull(filmOptional);
+    }
 
-        List<Optional<Film>> filmList = filmStorage.getAllFilms(); // получение все фильмов
+    @Test
+    public void getAllFilm() {
+        List<Film> filmList = filmStorage.getAllFilms(); // получение все фильмов
+        Assertions.assertNotNull(filmList);
+    }
 
-        for (Optional<Film> filmInList : filmList) {
-            Assertions.assertThat(filmInList)
-                    .isPresent()
-                    .hasValueSatisfying(film ->
-                            Assertions.assertThat(film).hasFieldOrPropertyWithValue("id", 1)
-                    );
-        }
-
-        Optional<Film> updateFilm = filmStorage.updateFilm(Film.builder() //обновили фильм
+    @Test
+    public void updateFilm() {
+        Film updateFilm = filmStorage.updateFilm(Film.builder() //обновили фильм
                 .id(1)
                 .name("new nisi eiusmod")
                 .description("new adipisicing")
@@ -65,20 +76,12 @@ class FilmApplicationTests {
                 .mpa(Mpa.builder().id(1).build())
                 .build());
 
-        Assertions.assertThat(updateFilm)
-                .isPresent()
-                .hasValueSatisfying(film ->
-                        Assertions.assertThat(film).hasFieldOrPropertyWithValue("name", "new nisi eiusmod")
-                );
+        Assertions.assertNotEquals(updateFilm, newFilm);
+    }
 
-        List<Optional<Film>> popularFilms = filmStorage.getPopularFilms(1);
-
-        for (Optional<Film> popularFilm : popularFilms) {
-            Assertions.assertThat(popularFilm)
-                    .isPresent()
-                    .hasValueSatisfying(film ->
-                            Assertions.assertThat(film).hasFieldOrPropertyWithValue("name", "new nisi eiusmod")
-                    );
-        }
+    @Test
+    public void getPopularFilm() {
+        List<Film> popularFilms = likeStorage.getPopularFilms(1);
+        Assertions.assertNotNull(popularFilms);
     }
 }

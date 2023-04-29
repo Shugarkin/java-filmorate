@@ -1,12 +1,14 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.FriendshipStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
@@ -20,106 +22,95 @@ class UserApplicationTests {
 
     @Autowired
     private final UserStorage userStorage;
+    
+    private final FriendshipStorage friendshipStorage;
 
-    @Test
-    public void contexTest() {
-        Assertions.assertThat(userStorage).isNotNull();
+    private User newUser;
+
+    private User userFriend;
+    @BeforeEach
+    public void setUp() {
+         newUser = userStorage.createUser(User.builder() //создание пользователя
+                .name("dolore")
+                .login("new dolore")
+                .email("newmail@mail.ru")
+                .birthday(LocalDate.of(1999, 01, 20))
+                .build());
+        Assertions.assertNotNull(newUser);
+
+        userFriend = userStorage.createUser(User.builder() //пользователь 2
+                .name("dolore Friend")
+                .login("dolore Friend")
+                .email("mail@mail.ru")
+                .birthday(LocalDate.of(1999, 01,21))
+                .build());
     }
 
     @Test
-    public void users() {
-        Optional<User> newUser = userStorage.createUser(User.builder() //создание пользователя
+    public void createUsers() {
+        User newUser1 = userStorage.createUser(User.builder() //создание пользователя
                 .name("dolore")
                 .login("dolore")
                 .email("mail@mail.ru")
-                .birthday(LocalDate.of(1999, 01,20))
+                .birthday(LocalDate.of(1999, 01, 20))
                 .build());
-        Assertions.assertThat(newUser)
-                .isPresent()
-                .hasValueSatisfying(user ->
-                        Assertions.assertThat(user).hasFieldOrPropertyWithValue("id", 1));
+        Assertions.assertNotNull(newUser1);
+    }
 
+    @Test
+    public void getUser() {
         Optional<User> userOptional = userStorage.getUserForId(1); //получение по id
+        Assertions.assertEquals(userOptional, Optional.of(newUser));
+    }
 
-        Assertions.assertThat(userOptional)
-                .isPresent()
-                .hasValueSatisfying(user ->
-                        Assertions.assertThat(user).hasFieldOrPropertyWithValue("id", 1)
-                );
+    @Test
+    public void getUserList() {
+        List<User> userList = userStorage.getAllUsers(); //получение списка пользователей
+        Assertions.assertEquals(userList, List.of(newUser));
 
-        List<Optional<User>> userList = userStorage.getAllUsers(); //получение списка пользователей
+    }
 
-        for (Optional<User> userOptional1 : userList) {
-            Assertions.assertThat(userOptional1)
-                    .isPresent()
-                    .hasValueSatisfying(user ->
-                            Assertions.assertThat(user).hasFieldOrPropertyWithValue("id", 1)
-                    );
-        }
-
-        Optional<User> userUpdate = userStorage.updateUser(User.builder() //изменение пользователя
+    @Test
+    public void updeteUser() {
+        User userUpdate = userStorage.updateUser(User.builder() //изменение пользователя
                 .id(1)
-                .name("dolore")
+                .name("asdfg")
                 .login("new")
-                .email("mail@mail.ru")
+                .email("asdfghj@mail.ru")
                 .birthday(LocalDate.of(1999, 01,20))
                 .build());
 
-        Assertions.assertThat(userUpdate)
-                .isPresent()
-                .hasValueSatisfying(user ->
-                        Assertions.assertThat(user).hasFieldOrPropertyWithValue("login", "new")
-                );
+        Assertions.assertNotEquals(userUpdate, newUser);
+    }
 
-        Optional<User> userFriend = userStorage.createUser(User.builder() //пользователь 2
+    @Test
+    public void addFriendAndGetForID() {
+        friendshipStorage.addFriend(1, 2); //добавление в друзья
+        List<User> friendList = friendshipStorage.getFriendsUserForId(1); //получение друзей пользователя по id
+        Assertions.assertEquals(List.of(userFriend), friendList);
+    }
+
+    @Test
+    public void deleteFriend() {
+        friendshipStorage.deleteFriend(1, 2);
+        List<User> friendList = friendshipStorage.getFriendsUserForId(1);
+        Assertions.assertNotEquals(List.of(userFriend), friendList);
+    }
+
+    @Test
+    public void listCommonFriend() {
+        User userFriend2 = userStorage.createUser(User.builder() //пользователь 3
                 .name("dolore Friend")
-                .login("dolore Friend")
-                .email("mail@mail.ru")
+                .login("dqwerolore Friend")
+                .email("qwertmail@mail.ru")
                 .birthday(LocalDate.of(1999, 01,21))
                 .build());
 
-        userStorage.addFriend(1, 2); //добавление в друзья
+        friendshipStorage.addFriend(1, 2); //добавлив друзья 2го к 1му
+        friendshipStorage.addFriend(3, 2); //добавлив друзья 2го к 3му
 
-        List<Optional<User>> friendList = userStorage.getFriendsUserForId(1); //получение друзей пользователя по id
+        List<User> listFriend = friendshipStorage.getListFriend(1, 3); //проверяем что 2й в листе друзей у 1го и 3го
 
-        for (Optional<User> userOptional1 : friendList) {
-            Assertions.assertThat(userOptional1)
-                    .isPresent()
-                    .hasValueSatisfying(user ->
-                            Assertions.assertThat(user).hasFieldOrPropertyWithValue("id", 2)
-                    );
-        }
-
-        userStorage.deleteFriend(1, 2); //удалили из друзей
-
-        List<Optional<User>> friendList1 = userStorage.getFriendsUserForId(1); //проверили что список друзей пуст
-
-        for (Optional<User> userOptional2 : friendList1) {
-            Assertions.assertThat(userOptional2)
-                    .isPresent()
-                    .hasValueSatisfying(user1 ->
-                            Assertions.assertThat(user1).hasFieldOrPropertyWithValue("id", null)
-                    );
-        }
-
-        Optional<User> userFriend2 = userStorage.createUser(User.builder() //пользователь 3
-                .name("dolore Friend")
-                .login("dolore Friend")
-                .email("mail@mail.ru")
-                .birthday(LocalDate.of(1999, 01,21))
-                .build());
-
-        userStorage.addFriend(1, 2); //добавлив друзья 2го к 1му
-        userStorage.addFriend(3, 2); //добавлив друзья 2го к 3му
-
-        List<Optional<User>> listFriend = userStorage.getListFriend(1, 3); //проверяем что 2й в листе друзей у 1го и 3го
-
-        for (Optional<User> userOptional2 : listFriend) {
-            Assertions.assertThat(userOptional2)
-                    .isPresent()
-                    .hasValueSatisfying(user1 ->
-                            Assertions.assertThat(user1).hasFieldOrPropertyWithValue("id", 2)
-                    );
-        }
+        Assertions.assertEquals(listFriend, List.of(userFriend));
     }
 }

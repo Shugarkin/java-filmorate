@@ -10,6 +10,9 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.GenreStorage;
+import ru.yandex.practicum.filmorate.storage.LikeStorage;
+import ru.yandex.practicum.filmorate.storage.MpaStorage;
 
 import java.util.*;
 
@@ -19,39 +22,48 @@ public class FilmService {
 
     private FilmStorage filmDbStorage;
 
+    private LikeStorage likeStorage;
+
+    private GenreStorage genreStorage;
+
+    private MpaStorage mpaStorage;
+
     @Autowired
-    public FilmService(FilmDbStorage filmDbStorage) {
+    public FilmService(FilmDbStorage filmDbStorage, LikeStorage likeStorage, GenreStorage genreStorage, MpaStorage mpaStorage) {
         this.filmDbStorage = filmDbStorage;
+        this.likeStorage = likeStorage;
+        this.genreStorage = genreStorage;
+        this.mpaStorage = mpaStorage;
     }
 
     public void addLike(Integer filmId, Integer userId) {
         if (userId < 0) {
             throw new ValidationException("id пользователя должен быть положительным");
         }
-        filmDbStorage.addLike(filmId, userId);
+        likeStorage.addLike(filmId, userId);
     }
 
     public void deleteLike(Integer filmId, Integer userId) {
         if (userId < 0) {
             throw new ValidationException("id пользователя должен быть положительным");
         }
-        filmDbStorage.deleteLike(filmId, userId);
+        likeStorage.deleteLike(filmId, userId);
     }
 
-    public List<Optional<Film>> getPopularFilms(Integer end) {
+    public List<Film> getPopularFilms(Integer end) {
         log.info("Получен список популярных фильмов колличесвом {} фильмов.", end);
-        return filmDbStorage.getPopularFilms(end);
+        return likeStorage.getPopularFilms(end);
     }
 
-    public List<Optional<Film>> getAllFilms() {
+    public List<Film> getAllFilms() {
         return filmDbStorage.getAllFilms();
     }
 
-    public Optional<Film> createFilms(Film film) {
+    public Film createFilms(Film film) {
         return filmDbStorage.createFilms(film);
     }
 
-    public Optional<Film> updateFilm(Film film) {
+    public Film updateFilm(Film film) {
         return filmDbStorage.updateFilm(film);
     }
 
@@ -60,18 +72,14 @@ public class FilmService {
     }
 
     public List<Genre> getGenre() {
-        return filmDbStorage.getGenreList();
-    }
-
-    public Genre getGenreById(Integer id) {
-        return filmDbStorage.getGenre(id);
+        return genreStorage.getGenreList();
     }
 
     public List<Mpa> getMpa() {
-        return filmDbStorage.getMpaList();
+        return mpaStorage.getMpaList();
     }
 
     public Mpa getMpaById(Integer id) {
-        return filmDbStorage.getMpaById(id);
+        return mpaStorage.getMpaById(id);
     }
 }

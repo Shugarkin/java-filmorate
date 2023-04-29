@@ -5,20 +5,12 @@ import java.util.Optional;
 
 public interface UserStorage {
 
-    List<Optional<User>> getAllUsers();
+    List<User> getAllUsers();
 
-    Optional<User> createUser(User user);
+    User createUser(User user);
 
-    Optional<User> updateUser(User user);
-
-    void addFriend(int userId, int friendId);
-
-    List<Optional<User>> getListFriend(int userId, int friendId);
-
-    void deleteFriend(int userId, int friendId);
+    User updateUser(User user);
 
     Optional<User> getUserForId(int id);
-
-    List<Optional<User>> getFriendsUserForId(Integer id);
 
 }

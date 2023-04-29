@@ -12,18 +12,24 @@ import javax.validation.ConstraintViolationException;
 @RestControllerAdvice("ru.yandex.practicum.filmorate.controller")
 @Slf4j
 public class HandlerException {
-
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse notFoundError(final RuntimeException e) {
+        log.debug("Получен статус 404 Not found {}", e.getMessage(), e);
+        return new ErrorResponse("Что-то пошло не так", e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse serverError(final Throwable e) {
-        log.warn("Неизвестная ошибка.");
-        return new ErrorResponse("Что-то пошло не так(", e.getMessage());
+        log.debug("Получен статус 500 Internal server error {}", e.getMessage(), e);
+        return new ErrorResponse("Что-то пошло не так", e.getMessage());
     }
 
     @ExceptionHandler({MethodArgumentNotValidException.class, ConstraintViolationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse badRequest(final Exception e) {
-        log.warn("Ошибка валидации.");
+        log.debug("Получен статус 400 Bad request {}", e.getMessage(), e);
         return new ErrorResponse("Ошибка валидации", e.getMessage());
     }
 }

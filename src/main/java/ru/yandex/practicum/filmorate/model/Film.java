@@ -6,13 +6,12 @@ import ru.yandex.practicum.filmorate.validator.ReleaseDate;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.LinkedHashSet;
 
 @Data
 @Builder
 public class Film {
 
-    @NotNull
     private int id;
 
     @NotBlank
@@ -29,8 +28,9 @@ public class Film {
     @Positive
     private long duration;
 
-    private List<Genre> genres;
+    private LinkedHashSet<Genre> genres;
 
+    @NotNull
     private Mpa mpa;
 
 }

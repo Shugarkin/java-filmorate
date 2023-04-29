@@ -9,7 +9,6 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/films")
@@ -24,17 +23,17 @@ public class FilmController {
     }
 
     @GetMapping
-    public List<Optional<Film>> getAllFilms() { //получение все фильмов
+    public List<Film> getAllFilms() { //получение все фильмов
         return filmService.getAllFilms();
     }
 
     @PostMapping
-    public Optional<Film> createFilms(@Valid @RequestBody Film film) { //создание фильма
+    public Film createFilms(@Valid @RequestBody Film film) { //создание фильма
         return filmService.createFilms(film);
     }
 
     @PutMapping
-    public Optional<Film> updateFilm(@Valid @RequestBody Film film) { //обновление фильма
+    public Film updateFilm(@Valid @RequestBody Film film) { //обновление фильма
        return filmService.updateFilm(film);
     }
 
@@ -50,7 +49,7 @@ public class FilmController {
 
     @GetMapping("/popular") //список популярных фильмов
     @Validated
-    public List<Optional<Film>> getPopularFilms(@Positive @RequestParam(defaultValue = "10") Integer count) {
+    public List<Film> getPopularFilms(@Positive @RequestParam(defaultValue = "10") Integer count) {
         return filmService.getPopularFilms(count);
     }
 

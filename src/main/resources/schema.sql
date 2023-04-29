@@ -26,8 +26,11 @@ create table IF NOT EXISTS GENRE
 
 create table IF NOT EXISTS GENRE_FILM
 (
+    GENRE_FILM_ID INTEGER auto_increment,
     FILM_ID  INTEGER not null,
     GENRE_ID INTEGER not null,
+    constraint GENRE_FILM_PK
+    PRIMARY KEY (GENRE_FILM_ID),
     constraint GENRE_FILM_FILMS_FILM_ID_FK
     foreign key (FILM_ID) references FILMS(FILM_ID),
     constraint GENRE_GENRE_FILM_GENRE_ID_FK
@@ -46,21 +49,32 @@ create table IF NOT EXISTS USERS
     );
 
 create table IF NOT EXISTS USER_FRIEND
-(   USER_ID   INTEGER not null,
+(
+    FRIENDSHIP_ID INTEGER auto_increment,
+    USER_ID   INTEGER not null,
     FRIEND_ID INTEGER not null,
+    constraint USER_FRIEND_PK
+    PRIMARY KEY (FRIENDSHIP_ID),
     constraint USER_FRIEND_USERS_FRIENDSHIP_ID_FK
-    foreign key (USER_ID) references USERS
+    foreign key (USER_ID) references USERS,
+    constraint USER_FRIEND_FRIEND_ID_FRIENDSHIP_ID_FK
+    foreign key (FRIEND_ID) references USERS
     );
 
 create table IF NOT EXISTS LIKE_VAULT
 (
     FILM_ID INTEGER not null,
     USER_ID INTEGER not null,
+    constraint LIKE_VAULT_PK
+    PRIMARY KEY (USER_ID, FILM_ID),
     constraint LIKE_VAULT_FILMS_FILM_ID_FK
     foreign key (FILM_ID) references FILMS(FILM_ID),
     constraint LIKE_VAULT_USERS_USER_ID_FK
     foreign key (USER_ID) references USERS
 );
+
+create unique index if not exists USER_EMAIL_UINDEX on USERS (email);
+create unique index if not exists USER_LOGIN_UINDEX on USERS (login);
 
 
 
