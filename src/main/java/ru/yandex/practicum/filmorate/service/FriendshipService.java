@@ -11,6 +11,7 @@ import java.util.List;
 public class FriendshipService {
 
     private FriendshipStorage friendshipStorage;
+
     @Autowired
     public FriendshipService(FriendshipStorage friendshipStorage) {
         this.friendshipStorage = friendshipStorage;

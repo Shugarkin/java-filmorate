@@ -6,12 +6,12 @@ import java.util.List;
 
 public interface FriendshipStorage {
 
-    public void addFriend(int userId, int friendId);
+    void addFriend(int userId, int friendId);
 
-    public void deleteFriend(int userId, int friendId);
+    void deleteFriend(int userId, int friendId);
 
-    public List<User> getFriendsUserForId(Integer id);
+    List<User> getFriendsUserForId(Integer id);
 
-    public List<User> getListFriend(int userId, int friendId);
+    List<User> getListFriend(int userId, int friendId);
 
 }

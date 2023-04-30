@@ -6,11 +6,11 @@ import java.util.List;
 
 public interface LikeStorage {
 
-    public void deleteLike(Integer filmId, Integer userId);
+    void deleteLike(Integer filmId, Integer userId);
 
-    public void addLike(Integer filmId, Integer userId);
+    void addLike(Integer filmId, Integer userId);
 
-    public List<Film> getPopularFilms(Integer end);
+    List<Film> getPopularFilms(Integer end);
 
 
 }
