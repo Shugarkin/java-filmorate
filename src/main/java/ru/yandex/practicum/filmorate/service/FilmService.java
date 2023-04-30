@@ -55,7 +55,7 @@ public class FilmService {
     public Film createFilms(Film film) {
         genreService.load(List.of(film));
         filmStorage.createFilms(film);
-        if(film.getGenres() != null) {
+        if (film.getGenres() != null) {
             genreService.addGenre(film);
         }
 
@@ -63,12 +63,12 @@ public class FilmService {
     }
 
     public Film updateFilm(Film film) {
-        if(film.getGenres() != null) {
+        if (film.getGenres() != null) {
             genreService.deleteGenre(film.getId());
         }
         genreService.load(List.of(film));
         filmStorage.updateFilm(film);
-        if(film.getGenres() != null) {
+        if (film.getGenres() != null) {
             genreService.addGenre(film);
         }
         return film;
