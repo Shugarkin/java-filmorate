@@ -15,7 +15,6 @@ import ru.yandex.practicum.filmorate.storage.LikeStorage;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
