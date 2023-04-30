@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dao.UserDbStorage;
 import ru.yandex.practicum.filmorate.exception.UserIsNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.FriendshipStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.*;
@@ -17,24 +16,27 @@ public class UserService {
 
     private UserStorage userDbStorage;
 
-    private FriendshipStorage friendshipStorage;
+    private FriendshipService friendshipService;
 
     @Autowired
-    public UserService(UserDbStorage userDbStorage, FriendshipStorage friendshipStorage) {
+    public UserService(UserDbStorage userDbStorage, FriendshipService friendshipService) {
         this.userDbStorage = userDbStorage;
-        this.friendshipStorage = friendshipStorage;
+        this.friendshipService = friendshipService;
     }
 
     public void userAddFriend(int userId, int friendId) { //метод добавления в друзья
-        friendshipStorage.addFriend(userId, friendId);
+        if (userDbStorage.getUserForId(userId) == null || userDbStorage.getUserForId(friendId) == null) {
+            throw new UserIsNotFoundException("Пользователя такого нету((");
+        }
+        friendshipService.addFriend(userId, friendId);
     }
 
     public void userDeleteFriend(int userId, int friendId) { //метод удаления из друзей
-        friendshipStorage.deleteFriend(userId, friendId);
+        friendshipService.deleteFriend(userId, friendId);
     }
 
     public List<User> getListFriend(int userId, int friendId) { //метод получения списка друзей
-        return friendshipStorage.getListFriend(userId, friendId);
+        return friendshipService.getListFriend(userId, friendId);
     }
 
     public List<User> getAllUsers() {
@@ -55,13 +57,12 @@ public class UserService {
     }
 
     public List<User> getFriendsUserForId(Integer id) {
-        return friendshipStorage.getFriendsUserForId(id);
+        return friendshipService.getFriendsUserForId(id);
     }
 
     private void checkName(User user) {
-        if (user.getName().isBlank()) {
+        if (user.getName().isBlank() || user.getName() == null) {
             user.setName(user.getLogin());
         }
     }
-
 }

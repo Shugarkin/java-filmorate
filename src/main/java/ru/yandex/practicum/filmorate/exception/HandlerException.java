@@ -12,11 +12,12 @@ import javax.validation.ConstraintViolationException;
 @RestControllerAdvice("ru.yandex.practicum.filmorate.controller")
 @Slf4j
 public class HandlerException {
-    @ExceptionHandler
+    @ExceptionHandler({FilmIsNotFoundException.class, UserIsNotFoundException.class,
+            IncorrectIDException.class, ValidationException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse notFoundError(final RuntimeException e) {
         log.debug("Получен статус 404 Not found {}", e.getMessage(), e);
-        return new ErrorResponse("Что-то пошло не так", e.getMessage());
+        return new ErrorResponse("Что-то", e.getMessage());
     }
 
     @ExceptionHandler

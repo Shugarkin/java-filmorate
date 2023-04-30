@@ -71,7 +71,11 @@ public class UserDbStorage implements UserStorage {
     public Optional<User> getUserForId(int id) {
         String sqlQuery = "select USER_ID, EMAIL, LOGIN, BIRTHDAY, USERNAME " +
                 "from USERS where USER_ID = ?";
-        return Optional.of(jdbcTemplate.queryForObject(sqlQuery, this::findUserById, id));
+        try {
+            return Optional.of(jdbcTemplate.queryForObject(sqlQuery, this::findUserById, id));
+        } catch (RuntimeException e) {
+            throw new UserIsNotFoundException("Пользователь не найден");
+        }
     }
 
     private User findUserById(ResultSet resultSet, int rowNum) throws SQLException {

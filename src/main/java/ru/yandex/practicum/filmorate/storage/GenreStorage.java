@@ -7,10 +7,13 @@ import java.util.List;
 
 public interface GenreStorage {
 
-    public List<Genre> getGenreList();
+    List<Genre> getGenreList();
 
-    public Genre getGenre(int id);
+    Genre getGenre(int id);
 
-    public void addGenre(Film film);
+    void addGenre(Film film);
 
+    void load(List<Film> films);
+
+    void deleteGenre(int id);
 }

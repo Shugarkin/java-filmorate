@@ -33,4 +33,7 @@ public class Film {
     @NotNull
     private Mpa mpa;
 
+    public void addGenre(Genre genre) {
+       genres.add(genre);
+    }
 }

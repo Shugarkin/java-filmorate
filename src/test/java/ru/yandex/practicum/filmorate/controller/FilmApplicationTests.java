@@ -56,8 +56,7 @@ class FilmApplicationTests {
 
     @Test
     public void getFilm() {
-        Optional<Film> filmOptional = filmStorage.getFilmForId(1); //получение фильма по id
-
+        Film filmOptional = filmStorage.getFilmForId(1); //получение фильма по id
         Assertions.assertNotNull(filmOptional);
     }
 
