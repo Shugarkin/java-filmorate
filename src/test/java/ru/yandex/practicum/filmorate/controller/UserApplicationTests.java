@@ -45,8 +45,8 @@ class UserApplicationTests {
                 .build());
         Assertions.assertNotNull(newUser);
 
-        Optional<User> userOptional = userStorage.getUserForId(8); //получение по id
-        Assertions.assertEquals(userOptional, Optional.of(newUser));
+        User userOptional = userStorage.getUserForId(8); //получение по id
+        Assertions.assertEquals(userOptional, newUser);
     }
 
     @Test

@@ -53,7 +53,7 @@ public class UserService {
     }
 
     public User getUserForId(int id) {
-        return userDbStorage.getUserForId(id).orElseThrow(() -> new UserIsNotFoundException("При получении id пришел null"));
+        return userDbStorage.getUserForId(id);
     }
 
     public List<User> getFriendsUserForId(Integer id) {

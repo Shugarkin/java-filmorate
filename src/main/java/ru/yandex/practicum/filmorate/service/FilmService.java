@@ -43,6 +43,7 @@ public class FilmService {
     public List<Film> getPopularFilms(Integer end) {
         log.info("Получен список популярных фильмов колличесвом {} фильмов.", end);
         List<Film> list = likeService.getPopularFilms(end);
+        genreService.load(list);
         return list;
     }
 
@@ -53,7 +54,6 @@ public class FilmService {
     }
 
     public Film createFilms(Film film) {
-        genreService.load(List.of(film));
         filmStorage.createFilms(film);
         if (film.getGenres() != null) {
             genreService.addGenre(film);
@@ -66,7 +66,6 @@ public class FilmService {
         if (film.getGenres() != null) {
             genreService.deleteGenre(film.getId());
         }
-        genreService.load(List.of(film));
         filmStorage.updateFilm(film);
         if (film.getGenres() != null) {
             genreService.addGenre(film);

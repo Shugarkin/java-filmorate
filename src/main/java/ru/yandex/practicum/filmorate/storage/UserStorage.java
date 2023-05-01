@@ -11,6 +11,6 @@ public interface UserStorage {
 
     User updateUser(User user);
 
-    Optional<User> getUserForId(int id);
+    User getUserForId(int id);
 
 }

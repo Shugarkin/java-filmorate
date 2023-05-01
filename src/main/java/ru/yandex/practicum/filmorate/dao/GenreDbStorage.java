@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.dao;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.GenreNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
@@ -37,7 +38,7 @@ public class GenreDbStorage implements GenreStorage {
         try {
             return jdbcTemplate.queryForObject(genre, this::findGenre, id);
         } catch (RuntimeException e) {
-            throw new ValidationException("Нет такого жанра");
+            throw new GenreNotFoundException("Нет такого жанра");
         }
     }
 
