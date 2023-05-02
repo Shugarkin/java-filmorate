@@ -3,86 +3,65 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dao.UserDbStorage;
 import ru.yandex.practicum.filmorate.exception.UserIsNotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class UserService {
 
-    private UserStorage inMemoryUserStorage;
+    private UserStorage userDbStorage;
+
+    private FriendshipService friendshipService;
 
     @Autowired
-    public UserService(UserStorage inMemoryUserStorage) {
-        this.inMemoryUserStorage = inMemoryUserStorage;
+    public UserService(UserDbStorage userDbStorage, FriendshipService friendshipService) {
+        this.userDbStorage = userDbStorage;
+        this.friendshipService = friendshipService;
     }
 
-    public User userAddFriend(int userId, int friendId) { //метод добавления в друзья
-        Map<Integer, User> users = inMemoryUserStorage.getMapUsers();
-        if (users.containsKey(userId) && users.containsKey(friendId)) {
-            inMemoryUserStorage.addFriend(userId, friendId);
-            User user = users.get(userId);
-            log.info("Пользователь с id {} добавил пользователя с id {} в друзья. ", userId, friendId);
-            return user;
+    public void userAddFriend(int userId, int friendId) { //метод добавления в друзья
+        if (userDbStorage.getUserForId(userId) == null || userDbStorage.getUserForId(friendId) == null) {
+            throw new UserIsNotFoundException("Пользователя такого нету((");
         }
-        throw new UserIsNotFoundException("Пользователь с данным id не найден.");
+        friendshipService.addFriend(userId, friendId);
     }
 
-    public User userDeleteFriend(int userId, int friendId) { //метод удаления из друзей
-        Map<Integer, User> users = inMemoryUserStorage.getMapUsers();
-        if (users.containsKey(userId) && users.containsKey(friendId)) {
-            User user = users.get(userId);
-            if (!user.getFriendVault().contains(friendId)) {
-                return user;
-            }
-            inMemoryUserStorage.deleteFriend(userId, friendId);
-            log.info("Пользователь с id {} удалил из друзей пользователя с id {}. ", userId, friendId);
-            return user;
-        }
-        throw new UserIsNotFoundException("Пользователь с данным id не найден.");
+    public void userDeleteFriend(int userId, int friendId) { //метод удаления из друзей
+        friendshipService.deleteFriend(userId, friendId);
     }
 
     public List<User> getListFriend(int userId, int friendId) { //метод получения списка друзей
-        User user = getUserForId(userId);
-        User friend = getUserForId(friendId);
-
-        List<User> listUser = user.getFriendVault().stream()
-                .filter(friend.getFriendVault()::contains)
-                .map(this::getUserForId).collect(Collectors.toList());
-
-        return listUser;
+        return friendshipService.getListFriend(userId, friendId);
     }
 
     public List<User> getAllUsers() {
-        return inMemoryUserStorage.getAllUsers();
+        return userDbStorage.getAllUsers();
     }
 
     public User createUser(User user) {
-        userCheck(user);
-        return inMemoryUserStorage.createUser(user);
+        checkName(user);
+        return userDbStorage.createUser(user);
     }
 
     public User updateUser(User user) {
-        userCheck(user);
-        return inMemoryUserStorage.updateUser(user);
+        return userDbStorage.updateUser(user);
     }
 
     public User getUserForId(int id) {
-        return inMemoryUserStorage.getUserForId(id).orElseThrow(() -> new ValidationException("При получении id пришел null"));
+        return userDbStorage.getUserForId(id);
     }
 
     public List<User> getFriendsUserForId(Integer id) {
-        return inMemoryUserStorage.getFriendsUserForId(id);
+        return friendshipService.getFriendsUserForId(id);
     }
 
-    private void userCheck(User user) {
-        if (user.getName() == null || user.getName().isBlank()) {
-            log.info("Имя пользователя не было указанно, по этому использован его логин.");
+    private void checkName(User user) {
+        if (user.getName().isBlank() || user.getName() == null) {
             user.setName(user.getLogin());
         }
     }
