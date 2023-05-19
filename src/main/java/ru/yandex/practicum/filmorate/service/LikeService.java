@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.LikeStorage;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -25,7 +26,8 @@ public class LikeService {
         likeStorage.addLike(filmId, userId);
     }
 
-    public List<Film> getPopularFilms(Integer end) {
-        return likeStorage.getPopularFilms(end);
+    public List<Film> getPopularFilms(Integer end, Integer genreId, Integer year) {
+        return likeStorage.getPopularFilms(end, genreId, year);
     }
+
 }

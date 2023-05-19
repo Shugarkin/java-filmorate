@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage;
 
 import ru.yandex.practicum.filmorate.model.Film;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface LikeStorage {
@@ -10,7 +11,6 @@ public interface LikeStorage {
 
     void addLike(Integer filmId, Integer userId);
 
-    List<Film> getPopularFilms(Integer end);
-
+    List<Film> getPopularFilms(Integer end, Integer genreId, Integer year);
 
 }

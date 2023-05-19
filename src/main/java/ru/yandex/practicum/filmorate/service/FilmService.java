@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.*;
 
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -40,9 +41,9 @@ public class FilmService {
         likeService.deleteLike(filmId, userId);
     }
 
-    public List<Film> getPopularFilms(Integer end) {
+    public List<Film> getPopularFilms(Integer end, Integer genreId, Integer year) {
         log.info("Получен список популярных фильмов колличесвом {} фильмов.", end);
-        List<Film> list = likeService.getPopularFilms(end);
+        List<Film> list = likeService.getPopularFilms(end, genreId, year);
         genreService.load(list);
         return list;
     }

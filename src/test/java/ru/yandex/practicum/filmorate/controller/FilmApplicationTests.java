@@ -81,7 +81,7 @@ class FilmApplicationTests {
 
     @Test
     public void getPopularFilm() {
-        List<Film> popularFilms = likeStorage.getPopularFilms(1);
+        List<Film> popularFilms = likeStorage.getPopularFilms(1, null, null);
         Assertions.assertNotNull(popularFilms);
     }
 }
