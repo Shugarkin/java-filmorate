@@ -73,6 +73,22 @@ create table IF NOT EXISTS LIKE_VAULT
     foreign key (USER_ID) references USERS
 );
 
+create type EVENT_TYPE_ENUM as enum ('created', 'approved', 'finshed');
+
+create table IF NOT EXISTS FEED
+(
+    EVENT_ID    INTEGER auto_increment,
+    USER_ID     INTEGER    not null,
+    ENTITY_ID INTEGER    not null,
+    EVENT_TYPE  CHARACTER VARYING    not null,
+    OPERATION   CHARACTER VARYING    not null,
+    TIMESTAMP_FEED BIGINT  not null,
+    constraint FEED_PK
+    PRIMARY KEY (EVENT_ID),
+    constraint FEED_USERS_FK
+    foreign key (USER_ID) references USERS(USER_ID)
+);
+
 create unique index if not exists USER_EMAIL_UINDEX on USERS (email);
 create unique index if not exists USER_LOGIN_UINDEX on USERS (login);
 
