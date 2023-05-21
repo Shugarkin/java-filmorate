@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.dao;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.UserIsNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FriendshipStorage;
 
@@ -22,7 +23,7 @@ public class FriendshipDbStorage implements FriendshipStorage {
     public void addFriend(int userId, int friendId) {
         String sqlQuery = "insert into USER_FRIEND (USER_ID, FRIEND_ID) " +
                 "values (?, ?) ";
-        jdbcTemplate.update(sqlQuery,userId, friendId);
+        jdbcTemplate.update(sqlQuery, userId, friendId);
     }
 
     @Override
@@ -34,10 +35,13 @@ public class FriendshipDbStorage implements FriendshipStorage {
     @Override
     public List<User> getFriendsUserForId(Integer id) {
         String friend = "select * from USERS, USER_FRIEND where USERS.USER_ID = USER_FRIEND.FRIEND_ID AND USER_FRIEND.USER_ID = ? ";
+//        if (getUserForId(user.getId()) == null)  {
+//            throw new UserIsNotFoundException("Пользователя такого нету((");
+//        }
         List<User> list = jdbcTemplate.query(friend,this::getFriend, id);
-
         return list;
     }
+
 
     @Override
     public List<User> getListFriend(int userId, int friendId) {
@@ -55,6 +59,7 @@ public class FriendshipDbStorage implements FriendshipStorage {
     }
 
     private User getFriend(ResultSet resultSet, int rowNum) throws SQLException {
+
         return User.builder()
                 .id(resultSet.getInt("USER_ID"))
                 .email(resultSet.getString("EMAIL"))

@@ -1,8 +1,12 @@
+drop table IF EXISTS MPA CASCADE;
+
 create table IF NOT EXISTS MPA
 (
     MPA_ID   INTEGER primary key,
     MPA_NAME CHARACTER VARYING not null
 );
+
+drop table IF EXISTS FILMS CASCADE;
 
 create table IF NOT EXISTS FILMS
 (
@@ -18,11 +22,15 @@ create table IF NOT EXISTS FILMS
     foreign key (MPA_ID) references MPA(MPA_ID)
     );
 
+drop table IF EXISTS GENRE CASCADE;
+
 create table IF NOT EXISTS GENRE
 (
     GENRE_ID   INTEGER           not null primary key,
     GENRE_NAME CHARACTER VARYING not null
 );
+
+drop table IF EXISTS GENRE_FILM CASCADE;
 
 create table IF NOT EXISTS GENRE_FILM
 (
@@ -32,10 +40,12 @@ create table IF NOT EXISTS GENRE_FILM
     constraint GENRE_FILM_PK
     PRIMARY KEY (GENRE_FILM_ID),
     constraint GENRE_FILM_FILMS_FILM_ID_FK
-    foreign key (FILM_ID) references FILMS(FILM_ID),
+    foreign key (FILM_ID) references FILMS(FILM_ID) ON DELETE CASCADE,
     constraint GENRE_GENRE_FILM_GENRE_ID_FK
-    foreign key (GENRE_ID) references GENRE(GENRE_ID)
+    foreign key (GENRE_ID) references GENRE(GENRE_ID) ON DELETE CASCADE
     );
+
+drop table IF EXISTS USERS CASCADE;
 
 create table IF NOT EXISTS USERS
 (
@@ -48,6 +58,8 @@ create table IF NOT EXISTS USERS
     PRIMARY KEY  (USER_ID)
     );
 
+drop table IF EXISTS USER_FRIEND CASCADE;
+
 create table IF NOT EXISTS USER_FRIEND
 (
     FRIENDSHIP_ID INTEGER auto_increment,
@@ -56,10 +68,13 @@ create table IF NOT EXISTS USER_FRIEND
     constraint USER_FRIEND_PK
     PRIMARY KEY (FRIENDSHIP_ID),
     constraint USER_FRIEND_USERS_FRIENDSHIP_ID_FK
-    foreign key (USER_ID) references USERS,
+    foreign key (USER_ID) references USERS ON DELETE CASCADE,
     constraint USER_FRIEND_FRIEND_ID_FRIENDSHIP_ID_FK
-    foreign key (FRIEND_ID) references USERS
+    foreign key (FRIEND_ID) references USERS ON DELETE CASCADE
     );
+
+
+drop table IF EXISTS LIKE_VAULT CASCADE;
 
 create table IF NOT EXISTS LIKE_VAULT
 (
@@ -68,7 +83,7 @@ create table IF NOT EXISTS LIKE_VAULT
     constraint LIKE_VAULT_PK
     PRIMARY KEY (USER_ID, FILM_ID),
     constraint LIKE_VAULT_FILMS_FILM_ID_FK
-    foreign key (FILM_ID) references FILMS(FILM_ID),
+    foreign key (FILM_ID) references FILMS(FILM_ID) ON DELETE CASCADE,
     constraint LIKE_VAULT_USERS_USER_ID_FK
     foreign key (USER_ID) references USERS
 );

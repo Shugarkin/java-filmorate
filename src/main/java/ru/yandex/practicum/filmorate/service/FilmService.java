@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.UserIsNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.*;
@@ -77,5 +78,12 @@ public class FilmService {
         Film film = filmStorage.getFilmForId(id);
         genreService.load(List.of(film));
         return film;
+    }
+
+    public void filmDeleteById(int filmId) { //метод удаления фильма по id
+        if (filmStorage.getFilmForId(filmId) == null) {
+            throw new UserIsNotFoundException("Фильма такого нету((");
+        }
+        filmStorage.deleteFilmById(filmId);
     }
 }

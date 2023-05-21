@@ -78,6 +78,16 @@ public class UserDbStorage implements UserStorage {
         }
     }
 
+    @Override
+    public void deleteUserById(int id) {
+        String sqlQuery = "delete from USERS where USER_ID = ?";
+        try {
+            jdbcTemplate.update(sqlQuery, id);
+        } catch (RuntimeException e) {
+            throw new UserIsNotFoundException("Пользователь не найден");
+        }
+    }
+
     private User findUserById(ResultSet resultSet, int rowNum) throws SQLException {
         return User.builder()
                 .id(resultSet.getInt("USER_ID"))
@@ -87,4 +97,5 @@ public class UserDbStorage implements UserStorage {
                 .name(resultSet.getString("USERNAME"))
                 .build();
     }
+
 }

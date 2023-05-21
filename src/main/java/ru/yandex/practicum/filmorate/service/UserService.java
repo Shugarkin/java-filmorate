@@ -57,6 +57,7 @@ public class UserService {
     }
 
     public List<User> getFriendsUserForId(Integer id) {
+        userDbStorage.getUserForId(id); // проверка на существование пользователя
         return friendshipService.getFriendsUserForId(id);
     }
 
@@ -65,4 +66,12 @@ public class UserService {
             user.setName(user.getLogin());
         }
     }
+
+    public void userDeleteById(int userId) { //метод удаления пользователя по id
+        if (userDbStorage.getUserForId(userId) == null) {
+            throw new UserIsNotFoundException("Пользователя такого нету((");
+        }
+        userDbStorage.deleteUserById(userId);
+    }
+
 }
