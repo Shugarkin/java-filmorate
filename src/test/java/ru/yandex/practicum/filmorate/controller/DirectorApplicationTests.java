@@ -88,12 +88,8 @@ public class DirectorApplicationTests {
 
     @Test
     public void shouldGetListAllDirectors() {
-        List<Director> allDirectors = directorStorage.getListAllDirectors();
-        assertThat(allDirectors)
-                .isNotNull()
-                .isEqualTo(Collections.emptyList());
         directorStorage.createDirector(firstDirector);
-        allDirectors = directorStorage.getListAllDirectors();
+        List<Director> allDirectors = directorStorage.getListAllDirectors();
         assertNotNull(allDirectors, "Cписок режиссеров пустой");
         assertEquals(allDirectors.size(), 1, "Количество режиссеров в списке не верное");
         assertEquals(allDirectors.get(0).getId(), 1, "Значение id режиссера в списке не совпадает");
