@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -33,7 +34,7 @@ public class DirectorApplicationTests {
             .name("Christopher Nolan")
             .build();
 
-    @AfterEach
+    @BeforeEach
     public void cleanDb() {
         JdbcTestUtils.deleteFromTables(jdbcTemplate,
                 "directors", "film_director");
