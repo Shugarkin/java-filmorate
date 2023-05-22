@@ -1,8 +1,10 @@
 package ru.yandex.practicum.filmorate.exception;
 
+import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -28,7 +30,7 @@ public class HandlerException {
         return new ErrorResponse("Что-то пошло не так", e.getMessage());
     }
 
-    @ExceptionHandler({MethodArgumentNotValidException.class, ConstraintViolationException.class})
+   @ExceptionHandler({MethodArgumentNotValidException.class, ConstraintViolationException.class, NullPointerException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse badRequest(final Exception e) {
         log.debug("Получен статус 400 Bad request {}", e.getMessage(), e);

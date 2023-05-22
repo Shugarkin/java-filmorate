@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import ru.yandex.practicum.filmorate.model.Review;
@@ -11,8 +12,10 @@ import ru.yandex.practicum.filmorate.service.ReviewService;
 import javax.validation.Valid;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/reviews")
+@Validated
 public class ReviewController {
 
     private final ReviewService reviewService;
@@ -36,8 +39,16 @@ public class ReviewController {
 
     @PostMapping
     public Review createReview(@Valid @RequestBody Review review) {
+        log.debug(review + " was added");
         return reviewService.createReview(review);
     }
+
+    /*@PostMapping
+    public ResponseEntity<Review> createReview(@Valid @RequestBody Review review) {
+        reviewService.createReview(review);
+        log.debug(review.getContent() + " was added");
+        return ResponseEntity.ok(review);
+    }*/
 
     @PutMapping
     public Review updateReview(@Valid @RequestBody Review review) {
