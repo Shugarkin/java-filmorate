@@ -11,4 +11,8 @@ public class ErrorResponse {
         this.error = error;
         this.description = description;
     }
+
+    public ErrorResponse(String error) {
+        this.error = error;
+    }
 }
