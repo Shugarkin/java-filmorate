@@ -27,7 +27,7 @@ public class HandlerException {
         return new ErrorResponse("Что-то пошло не так", e.getMessage());
     }
 
-    @ExceptionHandler({MethodArgumentNotValidException.class, ConstraintViolationException.class, NullPointerException.class})
+    @ExceptionHandler({MethodArgumentNotValidException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse badRequest(final Exception e) {
         log.debug("Получен статус 400 Bad request {}", e.getMessage(), e);
