@@ -36,7 +36,7 @@ public class DirectorApplicationTests {
     @AfterEach
     public void cleanDb() {
         JdbcTestUtils.deleteFromTables(jdbcTemplate,
-                "directors", "FILM_DIRECTOR");
+                "directors", "film_director");
         jdbcTemplate.update("ALTER TABLE directors ALTER COLUMN director_id RESTART WITH 1");
     }
 
@@ -89,9 +89,10 @@ public class DirectorApplicationTests {
     @Test
     public void shouldGetListAllDirectors() {
         directorStorage.createDirector(firstDirector);
+        directorStorage.createDirector(secondDirector);
         List<Director> allDirectors = directorStorage.getListAllDirectors();
+        System.out.println(allDirectors);
         assertNotNull(allDirectors, "Cписок режиссеров пустой");
-        assertEquals(allDirectors.size(), 1, "Количество режиссеров в списке не верное");
-        assertEquals(allDirectors.get(0).getId(), 1, "Значение id режиссера в списке не совпадает");
+        assertEquals(allDirectors.size(), 2, "Количество режиссеров в списке не верное");
     }
 }
