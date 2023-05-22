@@ -33,4 +33,11 @@ public class HandlerException {
         log.debug("Получен статус 400 Bad request {}", e.getMessage(), e);
         return new ErrorResponse("Ошибка валидации", e.getMessage());
     }
+
+    @ExceptionHandler({ReviewIsNotFoundException.class})
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse notFoundReview(final Exception e) {
+        log.debug("Получен статус 404 Not found {}", e.getMessage(), e);
+        return new ErrorResponse("Ошибка валидации", e.getMessage());
+    }
 }

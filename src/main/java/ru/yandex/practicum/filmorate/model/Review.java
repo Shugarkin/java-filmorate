@@ -5,22 +5,22 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Review {
 
-    private int id;
+    int reviewId;
 
-    @NotNull private String content;
+    @NotNull String content;
 
-    @NotNull private boolean isPositive;
+    @NotNull Boolean isPositive;
 
-    @NotNull private int userId;
+    @NotNull int userId;
 
-    @NotNull private int filmId;
+    @NotNull int filmId;
 
-    @NotNull private int useful;
+    int useful;
 }
