@@ -11,7 +11,6 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 import ru.yandex.practicum.filmorate.exception.DirectorNotFoundException;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.storage.DirectorStorage;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,11 +25,11 @@ public class DirectorApplicationTests {
     private final DirectorStorage directorStorage;
     private final JdbcTemplate jdbcTemplate;
 
-    Director FirstDirector = Director.builder()
+    Director firstDirector = Director.builder()
             .name("James Cameron")
             .build();
 
-    Director SecondDirector = Director.builder()
+    Director secondDirector = Director.builder()
             .name("Christopher Nolan")
             .build();
 
@@ -43,7 +42,7 @@ public class DirectorApplicationTests {
 
     @Test
     public void shouldCreateDirector() {
-        Director newDirector = directorStorage.createDirector(FirstDirector);
+        Director newDirector = directorStorage.createDirector(firstDirector);
         assertThat(newDirector)
                 .isNotNull()
                 .hasFieldOrPropertyWithValue("id", 1);
@@ -51,19 +50,19 @@ public class DirectorApplicationTests {
 
     @Test
     public void shouldUpdateDirector() {
-        Director newDirector = directorStorage.createDirector(FirstDirector);
+        Director newDirector = directorStorage.createDirector(firstDirector);
 
-        SecondDirector.setId(newDirector.getId());
-        Director updateDirector = directorStorage.updateDirector(SecondDirector);
+        secondDirector.setId(newDirector.getId());
+        Director updateDirector = directorStorage.updateDirector(secondDirector);
         assertThat(updateDirector)
                 .isNotNull()
                 .hasFieldOrPropertyWithValue("id", 1)
-                .hasFieldOrPropertyWithValue("name", SecondDirector.getName());
+                .hasFieldOrPropertyWithValue("name", secondDirector.getName());
     }
 
     @Test
     public void shouldDeleteDirector() {
-        Director newDirector = directorStorage.createDirector(FirstDirector);
+        Director newDirector = directorStorage.createDirector(firstDirector);
 
         directorStorage.deleteDirector(newDirector.getId());
         List<Director> directors = directorStorage.getListAllDirectors();
@@ -74,12 +73,12 @@ public class DirectorApplicationTests {
 
     @Test
     public void shouldGetDirectorById() {
-        Director newDirector = directorStorage.createDirector(FirstDirector);
+        Director newDirector = directorStorage.createDirector(firstDirector);
         Director foundDirector = directorStorage.getDirectorById(newDirector.getId());
         assertThat(foundDirector)
                 .isNotNull()
                 .hasFieldOrPropertyWithValue("id", 1)
-                .hasFieldOrPropertyWithValue("name", FirstDirector.getName());
+                .hasFieldOrPropertyWithValue("name", firstDirector.getName());
         DirectorNotFoundException e = assertThrows(DirectorNotFoundException.class, () -> directorStorage.getDirectorById(-1));
         assertEquals("Режиссер с id -1 не найден", e.getMessage());
 
@@ -93,7 +92,7 @@ public class DirectorApplicationTests {
         assertThat(directors)
                 .isNotNull()
                 .isEqualTo(Collections.emptyList());
-        directorStorage.createDirector(FirstDirector);
+        directorStorage.createDirector(firstDirector);
         directors = directorStorage.getListAllDirectors();
         assertNotNull(directors, "Cписок режиссеров пустой");
         assertEquals(directors.size(), 1, "Количество режиссеров в списке не верное");
