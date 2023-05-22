@@ -16,7 +16,7 @@ import javax.validation.ConstraintViolationException;
 @Slf4j
 public class HandlerException {
     @ExceptionHandler({FilmIsNotFoundException.class, UserIsNotFoundException.class,
-            IncorrectIDException.class, ValidationException.class, GenreNotFoundException.class})
+            IncorrectIDException.class, ValidationException.class, GenreNotFoundException.class, DirectorNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse notFoundError(final RuntimeException e) {
         log.debug("Получен статус 404 Not found {}", e.getMessage(), e);

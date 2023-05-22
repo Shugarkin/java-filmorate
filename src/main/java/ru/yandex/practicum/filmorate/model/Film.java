@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.validator.ReleaseDate;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Data
 @Builder
@@ -33,7 +34,9 @@ public class Film {
     @NotNull
     private Mpa mpa;
 
+    private Set<Director> directors;
+
     public void addGenre(Genre genre) {
-       genres.add(genre);
+        genres.add(genre);
     }
 }
