@@ -68,7 +68,6 @@ public class GenreDbStorage implements GenreStorage {
         });
     }
 
-
     private Genre findGenre(ResultSet resultSet, int rowNum) throws SQLException {
         return Genre.builder()
                 .id(resultSet.getInt("GENRE_ID"))
