@@ -20,8 +20,12 @@ public class ReviewDbStorage implements ReviewStorage {
 
     private final JdbcTemplate jdbcTemplate;
 
+    private int count;
+
     public ReviewDbStorage(JdbcTemplate jdbcTemplate) {
+
         this.jdbcTemplate = jdbcTemplate;
+        count = 0;
     }
 
     @Override
@@ -32,11 +36,11 @@ public class ReviewDbStorage implements ReviewStorage {
         if (review.getUserId() < 0) {
             throw new ReviewIsNotFoundException("Нет такого пользователя");
         }
-        KeyHolder keyHolder = new GeneratedKeyHolder();
+        //KeyHolder keyHolder = new GeneratedKeyHolder();
 
         String sqlQuery = "insert into review (content_review, is_Positive, user_id, film_id, useful)"
                 + " values(?, ?, ?, ?, ?)";
-        jdbcTemplate.update(connection -> {
+        /*jdbcTemplate.update(connection -> {
             PreparedStatement stmt = connection.prepareStatement(sqlQuery, new String[]{"reviewId"});
             stmt.setString(1, review.getContent());
             stmt.setBoolean(2, review.getIsPositive());
@@ -44,8 +48,18 @@ public class ReviewDbStorage implements ReviewStorage {
             stmt.setInt(4, review.getFilmId());
             stmt.setInt(5, review.getUseful());
             return stmt;
-        }, keyHolder);
-        review.setReviewId(keyHolder.getKey().intValue());
+        }, keyHolder);*/
+
+        jdbcTemplate.update(sqlQuery,
+                review.getContent(),
+                review.getIsPositive(),
+                review.getUserId(),
+                review.getFilmId(),
+                review.getUseful()
+        );
+        count++;
+        //review.setReviewId(keyHolder.getKey().intValue());
+        review.setReviewId(count);
         return review;
     }
 
