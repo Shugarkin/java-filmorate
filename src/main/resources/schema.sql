@@ -73,6 +73,26 @@ create table IF NOT EXISTS LIKE_VAULT
     foreign key (USER_ID) references USERS
 );
 
+create table IF NOT EXISTS DIRECTORS
+(
+    DIRECTOR_ID   INTEGER auto_increment,
+    DIRECTOR_NAME CHARACTER VARYING not null,
+    constraint DIRECTORS_PK
+    PRIMARY KEY (DIRECTOR_ID)
+);
+
+create table IF NOT EXISTS FILM_DIRECTOR
+(
+    FILM_ID  INTEGER not null,
+    DIRECTOR_ID INTEGER not null,
+    constraint FILM_DIRECTOR_PK
+    PRIMARY KEY (FILM_ID, DIRECTOR_ID),
+    constraint FILM_DIRECTOR_FK
+    foreign key (FILM_ID) references FILMS on delete cascade,
+    constraint FILM_DIRECTOR_FK_1
+    foreign key (DIRECTOR_ID) references DIRECTORS on delete cascade
+    );
+
 create unique index if not exists USER_EMAIL_UINDEX on USERS (email);
 create unique index if not exists USER_LOGIN_UINDEX on USERS (login);
 

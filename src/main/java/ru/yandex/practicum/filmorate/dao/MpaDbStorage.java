@@ -11,7 +11,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Component
-public class MpaDbStorage implements MpaStorage {
+public class
+MpaDbStorage implements MpaStorage {
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -22,7 +23,7 @@ public class MpaDbStorage implements MpaStorage {
     @Override
     public List<Mpa> getMpaList() {
         String sqlMpa = "select * from MPA ";
-        return jdbcTemplate.query(sqlMpa,this::findMpa);
+        return jdbcTemplate.query(sqlMpa, this::findMpa);
     }
 
     @Override

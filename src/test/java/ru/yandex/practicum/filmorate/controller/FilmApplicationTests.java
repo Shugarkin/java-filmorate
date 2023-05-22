@@ -6,12 +6,18 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.DirectorStorage;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import org.junit.jupiter.api.Assertions;
+import ru.yandex.practicum.filmorate.storage.LikeStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
@@ -22,6 +28,10 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 class FilmApplicationTests {
 
+    private final FilmStorage filmStorage;
+    private final UserStorage userStorage;
+    private final LikeStorage likeStorage;
+    private final DirectorStorage directorStorage;
     private final FilmService filmService;
 
     private Film newFilm;
@@ -91,5 +101,63 @@ class FilmApplicationTests {
 
         List<Film> list3 = filmService.getPopularFilms(1, null, 1999);
         Assertions.assertEquals(list3, List.of(filmService.getFilmForId(1)));
+    }
+
+    @Test
+    public void shouldGetFilmsByDirectorSorted() {
+        Film secondFilm = Film.builder()
+                .name("Титаник")
+                .description("Мужик выиграл билет в лучшую жизнь, но встретил девушку и умер")
+                .releaseDate(LocalDate.of(1997, 12, 19))
+                .duration(189)
+                .mpa(Mpa.builder()
+                        .id(3).build())
+                .build();
+        Film thirdFilm = Film.builder()
+                .name("Я - легенда")
+                .description("Мужик выживал в зомби-апокалипсисе несколько лет, но встретил женщину и умер")
+                .releaseDate(LocalDate.of(2007, 06, 30))
+                .duration(195)
+                .mpa(Mpa.builder()
+                        .id(3).build())
+                .build();
+
+        User firstUser = User.builder()
+                .email("user1@gmail.com")
+                .login("user1")
+                .name("Tom")
+                .birthday(LocalDate.of(1956, 7, 9))
+                .build();
+        User secondUser = User.builder()
+                .email("user2@gmail.com")
+                .login("user2")
+                .name("Liam")
+                .birthday(LocalDate.of(1952, 8, 7))
+                .build();
+
+        Director firstDirector = Director.builder().name("Сарик Андреасян").build();
+        Film film1 = filmStorage.getFilmForId(1);
+        Film film2 = filmStorage.createFilms(secondFilm);
+        Film film3 = filmStorage.createFilms(thirdFilm);
+        Director dir1 = directorStorage.createDirector(firstDirector);
+        User user1 = userStorage.createUser(firstUser);
+        User user2 = userStorage.createUser(secondUser);
+        filmStorage.addDirectorToFilm(film1.getId(), dir1.getId());
+        filmStorage.addDirectorToFilm(film2.getId(), dir1.getId());
+        filmStorage.addDirectorToFilm(film3.getId(), dir1.getId());
+        likeStorage.addLike(film1.getId(), user1.getId());
+        likeStorage.addLike(film2.getId(), user1.getId());
+        likeStorage.addLike(film2.getId(), user2.getId());
+        //сортируем по лайкам:
+        List<Film> filmsSortByLikes = filmStorage.getFilmsByDirectorSortedByLikes(dir1.getId());
+        Assertions.assertNotNull(filmsSortByLikes);
+        Assertions.assertEquals(filmsSortByLikes.get(0).getName(), film2.getName());
+        Assertions.assertEquals(filmsSortByLikes.get(1).getName(), film1.getName());
+        Assertions.assertEquals(filmsSortByLikes.get(2).getName(), film3.getName());
+        //сортиурем по году
+        List<Film> filmsSortByYear = filmStorage.getFilmsByDirectorSortedByYears(dir1.getId());
+        Assertions.assertEquals(filmsSortByYear.get(0).getName(), film2.getName());
+        Assertions.assertEquals(filmsSortByYear.get(1).getName(), film1.getName());
+        Assertions.assertEquals(filmsSortByYear.get(2).getName(), film3.getName());
     }
 }

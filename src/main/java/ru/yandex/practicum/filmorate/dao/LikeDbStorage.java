@@ -2,14 +2,14 @@ package ru.yandex.practicum.filmorate.dao;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.LikeStorage;
 
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -60,8 +60,11 @@ public class LikeDbStorage implements LikeStorage {
     }
 
     private String getSqlWithGenre() {
-        return "select * " +
+        return "select FILMS.film_id, FILMS.film_name, FILMS.description, FILMS.release_date, FILMS.duration, FILMS.mpa_id," +
+                "MPA.mpa_name, DIRECTORS.DIRECTOR_ID, DIRECTORS.DIRECTOR_NAME " +
                 " from LIKE_VAULT right JOIN FILMS ON LIKE_VAULT.FILM_ID = FILMS.FILM_ID " +
+                "left JOIN FILM_DIRECTOR ON FILMS.FILM_ID = FILM_DIRECTOR.FILM_ID " +
+                "left join DIRECTORS on FILM_DIRECTOR.DIRECTOR_ID = DIRECTORS.DIRECTOR_ID " +
                 " join MPA on FILMS.MPA_ID = MPA.MPA_ID " +
                 " right join GENRE_FILM on FILMS.FILM_ID = GENRE_FILM.FILM_ID " +
                 " where GENRE_ID = ? " +
@@ -71,8 +74,11 @@ public class LikeDbStorage implements LikeStorage {
     }
 
     private String getSqlWithYear() {
-        return "select * " +
+        return "select FILMS.film_id, FILMS.film_name, FILMS.description, FILMS.release_date, FILMS.duration, FILMS.mpa_id," +
+                "MPA.mpa_name, DIRECTORS.DIRECTOR_ID, DIRECTORS.DIRECTOR_NAME " +
                 " from LIKE_VAULT right JOIN FILMS ON LIKE_VAULT.FILM_ID = FILMS.FILM_ID " +
+                "left JOIN FILM_DIRECTOR ON FILMS.FILM_ID = FILM_DIRECTOR.FILM_ID " +
+                "left join DIRECTORS on FILM_DIRECTOR.DIRECTOR_ID = DIRECTORS.DIRECTOR_ID " +
                 " join MPA on FILMS.MPA_ID = MPA.MPA_ID " +
                 " where EXTRACT(YEAR FROM(FILMS.RELEASE_DATE)) = ?" +
                 " GROUP BY FILMS.FILM_ID " +
@@ -81,23 +87,27 @@ public class LikeDbStorage implements LikeStorage {
     }
 
     private String getSqlWithGenreAndYear() {
-        return  "select * " +
-                " from LIKE_VAULT right JOIN FILMS ON LIKE_VAULT.FILM_ID = FILMS.FILM_ID " +
-                " join MPA on FILMS.MPA_ID = MPA.MPA_ID " +
-                " join GENRE_FILM on FILMS.FILM_ID = GENRE_FILM.FILM_ID " +
-                " where GENRE_ID = ? and EXTRACT(YEAR FROM(FILMS.RELEASE_DATE)) = ?" +
-                " GROUP BY FILMS.FILM_ID " +
-                " ORDER BY COUNT(LIKE_VAULT.USER_ID) DESC " +
-                " limit ?";
+        return  "select FILMS.film_id, FILMS.film_name, FILMS.description, FILMS.release_date, FILMS.duration, FILMS.mpa_id," +
+                "MPA.mpa_name, DIRECTORS.DIRECTOR_ID, DIRECTORS.DIRECTOR_NAME " +
+                "from LIKE_VAULT " +
+                "right JOIN FILMS ON LIKE_VAULT.FILM_ID = FILMS.FILM_ID " +
+                "left JOIN FILM_DIRECTOR ON FILMS.FILM_ID = FILM_DIRECTOR.FILM_ID " +
+                "left join DIRECTORS on FILM_DIRECTOR.DIRECTOR_ID = DIRECTORS.DIRECTOR_ID " +
+                "join MPA on FILMS.MPA_ID = MPA.MPA_ID join GENRE_FILM on FILMS.FILM_ID = GENRE_FILM.FILM_ID " +
+                "where GENRE_ID = ? and EXTRACT(YEAR FROM(FILMS.RELEASE_DATE)) = ? " +
+                "GROUP BY FILMS.FILM_ID " +
+                "ORDER BY COUNT(LIKE_VAULT.USER_ID) DESC " +
+                "limit ?";
     }
 
     private String getSqlWithoutGenreAndYear() {
-        return  "select * " +
-                " from LIKE_VAULT right JOIN FILMS ON LIKE_VAULT.FILM_ID = FILMS.FILM_ID " +
-                " join MPA on FILMS.MPA_ID = MPA.MPA_ID " +
-                " GROUP BY FILMS.FILM_ID " +
-                " ORDER BY COUNT(USER_ID) " +
-                " DESC limit ?;";
+        return "SELECT f.film_id, f.film_name, f.description, f.release_date, f.duration, f.mpa_id, m.mpa_name, dire.DIRECTOR_ID, dire.DIRECTOR_NAME " +
+                "FROM films AS f JOIN mpa AS m ON f.mpa_id = m.mpa_id " +
+                "left JOIN FILM_DIRECTOR as fd ON f.FILM_ID = fd.FILM_ID " +
+                "left join DIRECTORS as dire on fd.DIRECTOR_ID = dire.DIRECTOR_ID " +
+                "LEFT JOIN (SELECT film_id, COUNT(user_id) AS likes_count FROM LIKE_VAULT GROUP BY film_id " +
+                "ORDER BY likes_count) AS popular ON f.film_id = popular.film_id " +
+                "ORDER BY popular.likes_count DESC limit ?";
     }
 
     private Film getFilmId(ResultSet resultSet, int rowNum) throws SQLException {
@@ -111,7 +121,22 @@ public class LikeDbStorage implements LikeStorage {
                         .id(resultSet.getInt("MPA_ID"))
                         .name(resultSet.getString("MPA_NAME")).build())
                 .genres(new LinkedHashSet<>())
+                .directors(mapRowDirector(resultSet))
                 .build();
+    }
+
+    private Set<Director> mapRowDirector(ResultSet rs) throws SQLException {
+        Set<Director> set = new HashSet<>();
+
+        Director d = Director.builder()
+                .id(rs.getInt("director_id"))
+                .name(rs.getString("director_name"))
+                .build();
+
+        if (d.getName() != null) {
+            set.add(d);
+        }
+        return set;
     }
 
 }
