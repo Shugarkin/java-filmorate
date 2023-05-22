@@ -1,12 +1,12 @@
---drop table IF EXISTS MPA CASCADE;
---drop table IF EXISTS FILMS CASCADE;
---drop table IF EXISTS GENRE_FILM CASCADE;
---drop table IF EXISTS USERS CASCADE;
---drop table IF EXISTS USER_FRIEND CASCADE;
---drop table IF EXISTS LIKE_VAULT CASCADE;
---drop table IF EXISTS review CASCADE;
---drop table IF EXISTS review_likes CASCADE;
---drop table IF EXISTS review_dislikes CASCADE;
+drop table IF EXISTS MPA CASCADE;
+drop table IF EXISTS FILMS CASCADE;
+drop table IF EXISTS GENRE_FILM CASCADE;
+drop table IF EXISTS USERS CASCADE;
+drop table IF EXISTS USER_FRIEND CASCADE;
+drop table IF EXISTS LIKE_VAULT CASCADE;
+drop table IF EXISTS review CASCADE;
+drop table IF EXISTS review_likes CASCADE;
+drop table IF EXISTS review_dislikes CASCADE;
 
 
 create table IF NOT EXISTS MPA

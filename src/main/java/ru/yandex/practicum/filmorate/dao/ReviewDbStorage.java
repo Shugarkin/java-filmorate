@@ -1,13 +1,17 @@
 package ru.yandex.practicum.filmorate.dao;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.FilmIsNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ReviewIsNotFoundException;
+import ru.yandex.practicum.filmorate.exception.UserIsNotFoundException;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.ReviewStorage;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -17,27 +21,24 @@ public class ReviewDbStorage implements ReviewStorage {
 
     private final JdbcTemplate jdbcTemplate;
 
-    private int count;
-
     public ReviewDbStorage(JdbcTemplate jdbcTemplate) {
 
         this.jdbcTemplate = jdbcTemplate;
-        count = 0;
     }
 
     @Override
     public Review addReview(Review review) {
         if (review.getFilmId() < 0) {
-            throw new ReviewIsNotFoundException("Нет такого фильма");
+            throw new FilmIsNotFoundException("Нет такого фильма");
         }
         if (review.getUserId() < 0) {
-            throw new ReviewIsNotFoundException("Нет такого пользователя");
+            throw new UserIsNotFoundException("Нет такого пользователя");
         }
-        //KeyHolder keyHolder = new GeneratedKeyHolder();
+        KeyHolder keyHolder = new GeneratedKeyHolder();
 
         String sqlQuery = "insert into review (content_review, is_Positive, user_id, film_id, useful)"
                 + " values(?, ?, ?, ?, ?)";
-        /*jdbcTemplate.update(connection -> {
+        jdbcTemplate.update(connection -> {
             PreparedStatement stmt = connection.prepareStatement(sqlQuery, new String[]{"reviewId"});
             stmt.setString(1, review.getContent());
             stmt.setBoolean(2, review.getIsPositive());
@@ -45,18 +46,8 @@ public class ReviewDbStorage implements ReviewStorage {
             stmt.setInt(4, review.getFilmId());
             stmt.setInt(5, review.getUseful());
             return stmt;
-        }, keyHolder);*/
-
-        jdbcTemplate.update(sqlQuery,
-                review.getContent(),
-                review.getIsPositive(),
-                review.getUserId(),
-                review.getFilmId(),
-                review.getUseful()
-        );
-        count++;
-        //review.setReviewId(keyHolder.getKey().intValue());
-        review.setReviewId(count);
+        }, keyHolder);
+        review.setReviewId(keyHolder.getKey().intValue());
         return review;
     }
 

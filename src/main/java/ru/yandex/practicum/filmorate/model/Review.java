@@ -12,7 +12,7 @@ import javax.validation.constraints.*;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Review {
 
-    int reviewId;
+    @NotNull int reviewId;
 
     @NotNull String content;
 
