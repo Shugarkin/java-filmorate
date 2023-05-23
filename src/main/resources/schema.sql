@@ -7,6 +7,7 @@ drop table IF EXISTS LIKE_VAULT CASCADE;
 drop table IF EXISTS review CASCADE;
 drop table IF EXISTS review_likes CASCADE;
 drop table IF EXISTS review_dislikes CASCADE;
+drop domain IF EXISTS EVENT_TYPE_ENUM CASCADE;
 
 
 create table IF NOT EXISTS MPA
