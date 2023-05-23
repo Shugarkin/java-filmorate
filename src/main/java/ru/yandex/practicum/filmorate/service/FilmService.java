@@ -44,9 +44,9 @@ public class FilmService {
         likeService.deleteLike(filmId, userId);
     }
 
-    public List<Film> getPopularFilms(Integer end) {
+    public List<Film> getPopularFilms(Integer end, Integer genreId, Integer year) {
         log.info("Получен список популярных фильмов колличесвом {} фильмов.", end);
-        List<Film> list = likeService.getPopularFilms(end);
+        List<Film> list = likeService.getPopularFilms(end, genreId, year);
         genreService.load(list);
         return list;
     }

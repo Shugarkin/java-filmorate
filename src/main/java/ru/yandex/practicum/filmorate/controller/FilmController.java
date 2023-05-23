@@ -49,8 +49,10 @@ public class FilmController {
 
     @GetMapping("/popular") //список популярных фильмов
     @Validated
-    public List<Film> getPopularFilms(@Positive @RequestParam(defaultValue = "10") Integer count) {
-        return filmService.getPopularFilms(count);
+    public List<Film> getPopularFilms(@Positive @RequestParam(defaultValue = "10") Integer count,
+                                      @Positive @RequestParam(required = false) Integer genreId,
+                                      @RequestParam(required = false) Integer year) {
+        return filmService.getPopularFilms(count, genreId, year);
     }
 
     @GetMapping("/{id}") //получение фильма по айди

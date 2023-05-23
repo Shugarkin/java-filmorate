@@ -8,7 +8,9 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
+import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.DirectorStorage;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
@@ -18,6 +20,7 @@ import ru.yandex.practicum.filmorate.storage.LikeStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 @SpringBootTest
@@ -29,23 +32,28 @@ class FilmApplicationTests {
     private final UserStorage userStorage;
     private final LikeStorage likeStorage;
     private final DirectorStorage directorStorage;
+    private final FilmService filmService;
+
     private Film newFilm;
 
     @BeforeEach
     public void setUp() {
-        newFilm = filmStorage.createFilms(Film.builder() //создали фильм
+        LinkedHashSet<Genre> genre = new LinkedHashSet<>();
+        genre.add(Genre.builder().id(1).name("Комедия").build());
+        newFilm = filmService.createFilms(Film.builder() //создали фильм
                 .name("nisi eiusmod")
                 .description("adipisicing")
                 .duration(100)
                 .releaseDate(LocalDate.of(1999, 01, 12))
-                .mpa(Mpa.builder().id(1).build())
+                .mpa(Mpa.builder().id(1).name("G").build())
+                .genres(genre)
                 .build());
 
     }
 
     @Test
     public void createFilm() {
-        Film film = filmStorage.createFilms(Film
+        Film film = filmService.createFilms(Film
                 .builder() //создали фильм
                 .name("ndbadbjwdmod")
                 .description("adiewqhebhwb eking")
@@ -59,19 +67,19 @@ class FilmApplicationTests {
 
     @Test
     public void getFilm() {
-        Film filmOptional = filmStorage.getFilmForId(1); //получение фильма по id
+        Film filmOptional = filmService.getFilmForId(1); //получение фильма по id
         Assertions.assertNotNull(filmOptional);
     }
 
     @Test
     public void getAllFilm() {
-        List<Film> filmList = filmStorage.getAllFilms(); // получение все фильмов
+        List<Film> filmList = filmService.getAllFilms(); // получение все фильмов
         Assertions.assertNotNull(filmList);
     }
 
     @Test
     public void updateFilm() {
-        Film updateFilm = filmStorage.updateFilm(Film.builder() //обновили фильм
+        Film updateFilm = filmService.updateFilm(Film.builder() //обновили фильм
                 .id(1)
                 .name("new nisi eiusmod")
                 .description("new adipisicing")
@@ -85,8 +93,14 @@ class FilmApplicationTests {
 
     @Test
     public void getPopularFilm() {
-        List<Film> popularFilms = likeStorage.getPopularFilms(1);
-        Assertions.assertNotNull(popularFilms);
+        List<Film> list1 = filmService.getPopularFilms(1, null, null);
+        Assertions.assertNotNull(list1);
+
+        List<Film> list2 = filmService.getPopularFilms(1, 1, null);
+        Assertions.assertEquals(list2, List.of(filmService.getFilmForId(1)));
+
+        List<Film> list3 = filmService.getPopularFilms(1, null, 1999);
+        Assertions.assertEquals(list3, List.of(filmService.getFilmForId(1)));
     }
 
     @Test
