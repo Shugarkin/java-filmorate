@@ -44,7 +44,7 @@ class UserApplicationTests {
                 .build());
         Assertions.assertNotNull(newUser);
 
-        User userOptional = userStorage.getUserForId(8); //получение по id
+        User userOptional = userStorage.getUserForId(10); //получение по id
         Assertions.assertEquals(userOptional, newUser);
     }
 
@@ -88,8 +88,8 @@ class UserApplicationTests {
     public void addFriendAndGetForID() {
         User newUser = userStorage.createUser(User.builder() //создание пользователя
                 .name("dolore")
-                .login("new dolore")
-                .email("newmail@mail.ru")
+                .login("new dooooolore")
+                .email("newmaaaaaaail@mail.ru")
                 .birthday(LocalDate.of(1999, 01, 20))
                 .build());
         Assertions.assertNotNull(newUser);
@@ -97,7 +97,7 @@ class UserApplicationTests {
         User userFriend = userStorage.createUser(User.builder() //пользователь 2
                 .name("dolore Friend")
                 .login("dolornd")
-                .email("mlsfasa@mail.ru")
+                .email("mlsfffffffasa@mail.ru")
                 .birthday(LocalDate.of(1999, 01,21))
                 .build());
 
@@ -152,8 +152,8 @@ class UserApplicationTests {
                 .birthday(LocalDate.of(1999, 01,21))
                 .build());
 
-        friendshipStorage.addFriend(1, 2); //добавлив друзья 2го к 1му
-        friendshipStorage.addFriend(3, 2); //добавлив друзья 2го к 3му
+        friendshipStorage.addFriend(1, 4); //добавлив друзья 2го к 1му
+        friendshipStorage.addFriend(3, 4); //добавлив друзья 2го к 3му
 
         List<User> listFriend = friendshipStorage.getListFriend(1, 3); //проверяем что 2й в листе друзей у 1го и 3го
 

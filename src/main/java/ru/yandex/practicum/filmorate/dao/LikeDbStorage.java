@@ -121,11 +121,11 @@ public class LikeDbStorage implements LikeStorage {
                         .id(resultSet.getInt("MPA_ID"))
                         .name(resultSet.getString("MPA_NAME")).build())
                 .genres(new LinkedHashSet<>())
-                .directors(mapRowDirector(resultSet))
+                .directors(getListDirector(resultSet))
                 .build();
     }
 
-    private Set<Director> mapRowDirector(ResultSet rs) throws SQLException {
+    private Set<Director> getListDirector(ResultSet rs) throws SQLException {
         Set<Director> set = new HashSet<>();
 
         Director d = Director.builder()
@@ -133,7 +133,7 @@ public class LikeDbStorage implements LikeStorage {
                 .name(rs.getString("director_name"))
                 .build();
 
-        if (d.getName() != null) {
+        if (d.getName() != null || d.getId() > 0) {
             set.add(d);
         }
         return set;
