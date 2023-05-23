@@ -1,3 +1,14 @@
+drop table IF EXISTS MPA CASCADE;
+drop table IF EXISTS FILMS CASCADE;
+drop table IF EXISTS GENRE_FILM CASCADE;
+drop table IF EXISTS USERS CASCADE;
+drop table IF EXISTS USER_FRIEND CASCADE;
+drop table IF EXISTS LIKE_VAULT CASCADE;
+drop table IF EXISTS review CASCADE;
+drop table IF EXISTS review_likes CASCADE;
+drop table IF EXISTS review_dislikes CASCADE;
+
+
 create table IF NOT EXISTS MPA
 (
     MPA_ID   INTEGER primary key,
@@ -72,6 +83,50 @@ create table IF NOT EXISTS LIKE_VAULT
     constraint LIKE_VAULT_USERS_USER_ID_FK
     foreign key (USER_ID) references USERS
 );
+
+
+create table IF NOT EXISTS review
+(
+    reviewId INTEGER  auto_increment primary key,
+    content_review  CHARACTER VARYING not null,
+    is_Positive  CHARACTER VARYING not null,
+    user_id INTEGER NOT NULL REFERENCES USERS (USER_ID),
+    film_id INTEGER NOT NULL REFERENCES FILMS (FILM_ID),
+    useful INTEGER
+    );
+
+    create table IF NOT EXISTS review_likes
+(
+    review_id INTEGER NOT NULL REFERENCES review (reviewId) ON DELETE CASCADE,
+    user_id INTEGER NOT NULL REFERENCES USERS (USER_ID) ON DELETE CASCADE
+);
+
+create table IF NOT EXISTS review_dislikes
+(
+    review_id INTEGER NOT NULL REFERENCES review (reviewId) ON DELETE CASCADE,
+    user_id INTEGER NOT NULL REFERENCES USERS (USER_ID) ON DELETE CASCADE
+);
+
+create table IF NOT EXISTS DIRECTORS
+(
+    DIRECTOR_ID   INTEGER auto_increment,
+    DIRECTOR_NAME CHARACTER VARYING not null,
+    constraint DIRECTORS_PK
+    PRIMARY KEY (DIRECTOR_ID)
+);
+
+create table IF NOT EXISTS FILM_DIRECTOR
+(
+    FILM_ID  INTEGER not null,
+    DIRECTOR_ID INTEGER not null,
+    constraint FILM_DIRECTOR_PK
+    PRIMARY KEY (FILM_ID, DIRECTOR_ID),
+    constraint FILM_DIRECTOR_FK
+    foreign key (FILM_ID) references FILMS on delete cascade,
+    constraint FILM_DIRECTOR_FK_1
+    foreign key (DIRECTOR_ID) references DIRECTORS on delete cascade
+    );
+
 
 create type EVENT_TYPE_ENUM as enum ('created', 'approved', 'finshed');
 

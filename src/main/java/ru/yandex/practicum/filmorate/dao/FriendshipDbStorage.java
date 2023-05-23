@@ -22,7 +22,7 @@ public class FriendshipDbStorage implements FriendshipStorage {
     public void addFriend(int userId, int friendId) {
         String sqlQuery = "insert into USER_FRIEND (USER_ID, FRIEND_ID) " +
                 "values (?, ?) ";
-        jdbcTemplate.update(sqlQuery,userId, friendId);
+        jdbcTemplate.update(sqlQuery, userId, friendId);
     }
 
     @Override
@@ -34,7 +34,7 @@ public class FriendshipDbStorage implements FriendshipStorage {
     @Override
     public List<User> getFriendsUserForId(Integer id) {
         String friend = "select * from USERS, USER_FRIEND where USERS.USER_ID = USER_FRIEND.FRIEND_ID AND USER_FRIEND.USER_ID = ? ";
-        List<User> list = jdbcTemplate.query(friend,this::getFriend, id);
+        List<User> list = jdbcTemplate.query(friend, this::getFriend, id);
 
         return list;
     }

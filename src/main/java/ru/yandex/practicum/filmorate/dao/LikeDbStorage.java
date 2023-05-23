@@ -36,14 +36,11 @@ public class LikeDbStorage implements LikeStorage {
 
     @Override
     public List<Film> getPopularFilms(Integer end) {
-        String sqlFilms = "select * " +
-                " from LIKE_VAULT right JOIN FILMS ON LIKE_VAULT.FILM_ID = FILMS.FILM_ID " +
-                " join MPA on FILMS.MPA_ID = MPA.MPA_ID " +
-                " GROUP BY FILMS.FILM_ID " +
-                " ORDER BY COUNT(USER_ID) " +
-                " DESC limit ?;";
-        List<Film> filmId = jdbcTemplate.query(sqlFilms, this::getFilmId, end);
-
+        String sql = "SELECT f.film_id, f.film_name, f.description, f.release_date, " +
+                "f.duration, f.mpa_id, m.mpa_name FROM films AS f JOIN mpa AS m ON f.mpa_id = m.mpa_id " +
+                "LEFT JOIN (SELECT film_id, COUNT(user_id) AS likes_count FROM LIKE_VAULT GROUP BY film_id " +
+                "ORDER BY likes_count) AS popular ON f.film_id = popular.film_id ORDER BY popular.likes_count DESC limit ?";
+        List<Film> filmId = jdbcTemplate.query(sql, this::getFilmId, end);
         return filmId;
     }
 

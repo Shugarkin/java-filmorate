@@ -28,8 +28,8 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> getAllUsers() {
-            String sqlQuery = "select * from USERS";
-            return jdbcTemplate.query(sqlQuery, this::findUserById);
+        String sqlQuery = "select * from USERS";
+        return jdbcTemplate.query(sqlQuery, this::findUserById);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User updateUser(User user) {
-        if (getUserForId(user.getId()) == null)  {
+        if (getUserForId(user.getId()) == null) {
             throw new UserIsNotFoundException("Пользователя такого нету((");
         }
         String sqlQuery = "update USERS set " +
