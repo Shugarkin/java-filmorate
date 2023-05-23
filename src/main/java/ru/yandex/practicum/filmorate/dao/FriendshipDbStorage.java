@@ -34,13 +34,10 @@ public class FriendshipDbStorage implements FriendshipStorage {
     @Override
     public List<User> getFriendsUserForId(Integer id) {
         String friend = "select * from USERS, USER_FRIEND where USERS.USER_ID = USER_FRIEND.FRIEND_ID AND USER_FRIEND.USER_ID = ? ";
-//        if (getUserForId(user.getId()) == null)  {
-//            throw new UserIsNotFoundException("Пользователя такого нету((");
-//        }
         List<User> list = jdbcTemplate.query(friend, this::getFriend, id);
+
         return list;
     }
-
 
     @Override
     public List<User> getListFriend(int userId, int friendId) {
@@ -58,7 +55,6 @@ public class FriendshipDbStorage implements FriendshipStorage {
     }
 
     private User getFriend(ResultSet resultSet, int rowNum) throws SQLException {
-
         return User.builder()
                 .id(resultSet.getInt("USER_ID"))
                 .email(resultSet.getString("EMAIL"))

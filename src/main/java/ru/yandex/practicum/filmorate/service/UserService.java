@@ -5,6 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dao.UserDbStorage;
 import ru.yandex.practicum.filmorate.exception.UserIsNotFoundException;
+import ru.yandex.practicum.filmorate.model.EventType;
+import ru.yandex.practicum.filmorate.model.Feed;
+import ru.yandex.practicum.filmorate.model.Operation;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
@@ -18,10 +21,13 @@ public class UserService {
 
     private FriendshipService friendshipService;
 
+    private FeedService feedService;
+
     @Autowired
-    public UserService(UserDbStorage userDbStorage, FriendshipService friendshipService) {
+    public UserService(UserDbStorage userDbStorage, FriendshipService friendshipService, FeedService feedService) {
         this.userDbStorage = userDbStorage;
         this.friendshipService = friendshipService;
+        this.feedService = feedService;
     }
 
     public void userAddFriend(int userId, int friendId) { //метод добавления в друзья
@@ -29,10 +35,12 @@ public class UserService {
             throw new UserIsNotFoundException("Пользователя такого нету((");
         }
         friendshipService.addFriend(userId, friendId);
+        feedService.addFeed(userId, friendId, EventType.FRIEND, Operation.ADD);
     }
 
     public void userDeleteFriend(int userId, int friendId) { //метод удаления из друзей
         friendshipService.deleteFriend(userId, friendId);
+        feedService.addFeed(userId, friendId, EventType.FRIEND, Operation.REMOVE);
     }
 
     public List<User> getListFriend(int userId, int friendId) { //метод получения списка друзей
@@ -57,8 +65,17 @@ public class UserService {
     }
 
     public List<User> getFriendsUserForId(Integer id) {
-        userDbStorage.getUserForId(id); // проверка на существование пользователя
+        if (getUserForId(id) == null)  {
+            throw new UserIsNotFoundException("Пользователя такого нету((");
+        }
         return friendshipService.getFriendsUserForId(id);
+    }
+
+    public List<Feed> getFeed(Integer id) {
+        if (userDbStorage.getUserForId(id) == null) {
+            throw new UserIsNotFoundException("Пользователя такого нету((");
+        }
+        return feedService.getFeed(id);
     }
 
     private void checkName(User user) {

@@ -10,7 +10,6 @@ public interface LikeStorage {
 
     void addLike(Integer filmId, Integer userId);
 
-    List<Film> getPopularFilms(Integer end);
-
+    List<Film> getPopularFilms(Integer end, Integer genreId, Integer year);
 
 }
