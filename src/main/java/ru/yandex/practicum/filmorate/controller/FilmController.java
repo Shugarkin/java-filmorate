@@ -34,7 +34,7 @@ public class FilmController {
 
     @PutMapping
     public Film updateFilm(@Valid @RequestBody Film film) { //обновление фильма
-       return filmService.updateFilm(film);
+        return filmService.updateFilm(film);
     }
 
     @PutMapping("/{id}/like/{userId}") //добавление лайка
@@ -49,8 +49,10 @@ public class FilmController {
 
     @GetMapping("/popular") //список популярных фильмов
     @Validated
-    public List<Film> getPopularFilms(@Positive @RequestParam(defaultValue = "10") Integer count) {
-        return filmService.getPopularFilms(count);
+    public List<Film> getPopularFilms(@Positive @RequestParam(defaultValue = "10") Integer count,
+                                      @Positive @RequestParam(required = false) Integer genreId,
+                                      @RequestParam(required = false) Integer year) {
+        return filmService.getPopularFilms(count, genreId, year);
     }
 
     @GetMapping("/{id}") //получение фильма по айди
@@ -61,5 +63,9 @@ public class FilmController {
     @DeleteMapping("{id}") //удаление фильма по id
     public void filmDeleteById(@PathVariable("id") final Integer filmId) {
         filmService.filmDeleteById(filmId);
+
+    @GetMapping("/director/{directorId}")
+    public List<Film> getFilmsByDirectorSorted(@PathVariable int directorId, @RequestParam String sortBy) {
+        return filmService.getFilmsByDirectorSorted(directorId, sortBy);
     }
 }

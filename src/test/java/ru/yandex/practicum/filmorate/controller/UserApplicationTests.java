@@ -88,8 +88,8 @@ class UserApplicationTests {
     public void addFriendAndGetForID() {
         User newUser = userStorage.createUser(User.builder() //создание пользователя
                 .name("dolore")
-                .login("new dolore")
-                .email("newmail@mail.ru")
+                .login("new dooooolore")
+                .email("newmaaaaaaail@mail.ru")
                 .birthday(LocalDate.of(1999, 01, 20))
                 .build());
         Assertions.assertNotNull(newUser);
@@ -97,7 +97,7 @@ class UserApplicationTests {
         User userFriend = userStorage.createUser(User.builder() //пользователь 2
                 .name("dolore Friend")
                 .login("dolornd")
-                .email("mlsfasa@mail.ru")
+                .email("mlsfffffffasa@mail.ru")
                 .birthday(LocalDate.of(1999, 01,21))
                 .build());
 

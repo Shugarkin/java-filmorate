@@ -25,7 +25,8 @@ public class LikeService {
         likeStorage.addLike(filmId, userId);
     }
 
-    public List<Film> getPopularFilms(Integer end) {
-        return likeStorage.getPopularFilms(end);
+    public List<Film> getPopularFilms(Integer end, Integer genreId, Integer year) {
+        return likeStorage.getPopularFilms(end, genreId, year);
     }
+
 }
