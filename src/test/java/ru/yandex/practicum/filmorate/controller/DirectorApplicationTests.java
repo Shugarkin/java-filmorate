@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import ru.yandex.practicum.filmorate.exception.DirectorNotFoundException;
 import ru.yandex.practicum.filmorate.model.Director;
+import ru.yandex.practicum.filmorate.service.DirectorService;
 import ru.yandex.practicum.filmorate.storage.DirectorStorage;
 
 import java.util.Collections;
@@ -22,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class DirectorApplicationTests {
-    private final DirectorStorage directorStorage;
+    private final DirectorService directorStorage;
     private final JdbcTemplate jdbcTemplate;
 
     Director firstDirector = Director.builder()
