@@ -6,7 +6,6 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.FilmIsNotFoundException;
-import ru.yandex.practicum.filmorate.exception.UserIsNotFoundException;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.ReviewStorage;
 
@@ -27,12 +26,7 @@ public class ReviewDbStorage implements ReviewStorage {
 
     @Override
     public Review addReview(Review review) {
-        if (review.getFilmId() < 0) {
-            throw new FilmIsNotFoundException("Нет такого фильма");
-        }
-        if (review.getUserId() < 0) {
-            throw new UserIsNotFoundException("Нет такого пользователя");
-        }
+
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         String sqlQuery = "insert into review (content_review, is_Positive, user_id, film_id, useful)"
@@ -180,6 +174,26 @@ public class ReviewDbStorage implements ReviewStorage {
                         "                             WHERE review_id = review.reviewId)) where reviewId = ?",
                 reviewId, userId, reviewId);
         return getReviewById(reviewId);
+    }
+
+    @Override
+    public Integer getUser(Integer idReview) {
+        String sql = "select user_id from review where reviewId = ?";
+        return jdbcTemplate.queryForObject(sql, this::findUserID, idReview);
+    }
+
+    private Integer findUserID(ResultSet res, int rowNum) throws SQLException {
+        return res.getInt("user_id");
+    }
+
+    @Override
+    public Integer getFilm(Integer idReview) {
+        String sql = "select film_id from review where reviewId = ?";
+        return jdbcTemplate.queryForObject(sql, this::findFilmID, idReview);
+    }
+
+    private Integer findFilmID(ResultSet res, int rowNum) throws SQLException {
+        return res.getInt("film_id");
     }
 
     private Review findReview(ResultSet resultSet, int rowNum) throws SQLException {

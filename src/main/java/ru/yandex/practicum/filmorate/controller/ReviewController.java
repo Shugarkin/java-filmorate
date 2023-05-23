@@ -43,13 +43,6 @@ public class ReviewController {
         return reviewService.createReview(review);
     }
 
-    /*@PostMapping
-    public ResponseEntity<Review> createReview(@Valid @RequestBody Review review) {
-        reviewService.createReview(review);
-        log.debug(review.getContent() + " was added");
-        return ResponseEntity.ok(review);
-    }*/
-
     @PutMapping
     public Review updateReview(@Valid @RequestBody Review review) {
         return reviewService.updateReview(review);

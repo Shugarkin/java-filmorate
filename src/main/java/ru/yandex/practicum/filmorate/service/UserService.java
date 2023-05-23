@@ -65,10 +65,16 @@ public class UserService {
     }
 
     public List<User> getFriendsUserForId(Integer id) {
+        if (getUserForId(id) == null)  {
+            throw new UserIsNotFoundException("Пользователя такого нету((");
+        }
         return friendshipService.getFriendsUserForId(id);
     }
 
     public List<Feed> getFeed(Integer id) {
+        if (userDbStorage.getUserForId(id) == null) {
+            throw new UserIsNotFoundException("Пользователя такого нету((");
+        }
         return feedService.getFeed(id);
     }
 
