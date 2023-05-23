@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.dao;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
@@ -8,13 +9,11 @@ import ru.yandex.practicum.filmorate.exception.UserIsNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import org.springframework.jdbc.core.JdbcTemplate;
-
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.List;
 
 @Component
 @Qualifier("UserDbStorage")
@@ -28,8 +27,8 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> getAllUsers() {
-            String sqlQuery = "select * from USERS";
-            return jdbcTemplate.query(sqlQuery, this::findUserById);
+        String sqlQuery = "select * from USERS";
+        return jdbcTemplate.query(sqlQuery, this::findUserById);
     }
 
     @Override
@@ -52,7 +51,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User updateUser(User user) {
-        if (getUserForId(user.getId()) == null)  {
+        if (getUserForId(user.getId()) == null) {
             throw new UserIsNotFoundException("Пользователя такого нету((");
         }
         String sqlQuery = "update USERS set " +

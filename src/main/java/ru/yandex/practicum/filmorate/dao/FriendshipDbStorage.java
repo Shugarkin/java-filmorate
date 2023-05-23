@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.dao;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exception.UserIsNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FriendshipStorage;
 
@@ -38,7 +37,7 @@ public class FriendshipDbStorage implements FriendshipStorage {
 //        if (getUserForId(user.getId()) == null)  {
 //            throw new UserIsNotFoundException("Пользователя такого нету((");
 //        }
-        List<User> list = jdbcTemplate.query(friend,this::getFriend, id);
+        List<User> list = jdbcTemplate.query(friend, this::getFriend, id);
         return list;
     }
 

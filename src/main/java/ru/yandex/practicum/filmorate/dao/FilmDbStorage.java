@@ -6,14 +6,16 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.FilmIsNotFoundException;
-import ru.yandex.practicum.filmorate.exception.UserIsNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
-import java.sql.*;
 import java.sql.Date;
-import java.util.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.LinkedHashSet;
+import java.util.List;
 
 @Component
 @Qualifier("FilmDbStorage")
@@ -28,10 +30,10 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> getAllFilms() {
-            String sqlQuery = "select * " +
-                    "from MPA, FILMS " +
-                    " where MPA.MPA_ID = FILMS.MPA_ID ";
-            return jdbcTemplate.query(sqlQuery, this::findFilm);
+        String sqlQuery = "select * " +
+                "from MPA, FILMS " +
+                " where MPA.MPA_ID = FILMS.MPA_ID ";
+        return jdbcTemplate.query(sqlQuery, this::findFilm);
     }
 
     @Override
@@ -41,7 +43,7 @@ public class FilmDbStorage implements FilmStorage {
         String sqlQuery = "insert into films (FILM_NAME, DESCRIPTION, RELEASE_DATE, DURATION, MPA_ID)"
                 + " values(?,?,?,?,?)";
         jdbcTemplate.update(connection -> {
-            PreparedStatement stmt = connection.prepareStatement(sqlQuery,  new String[]{"FILM_ID"});
+            PreparedStatement stmt = connection.prepareStatement(sqlQuery, new String[]{"FILM_ID"});
             stmt.setString(1, film.getName());
             stmt.setString(2, film.getDescription());
             stmt.setDate(3, Date.valueOf(film.getReleaseDate()));
@@ -64,25 +66,25 @@ public class FilmDbStorage implements FilmStorage {
                 "FILM_NAME = ?, DESCRIPTION = ?, RELEASE_DATE = ?, DURATION = ?, MPA_ID = ?  " +
                 "where FILM_ID = ?";
 
-            jdbcTemplate.update(sqlQuery,
-                    film.getName(),
-                    film.getDescription(),
-                    film.getReleaseDate(),
-                    film.getDuration(),
-                    film.getMpa().getId(),
-                    film.getId());
+        jdbcTemplate.update(sqlQuery,
+                film.getName(),
+                film.getDescription(),
+                film.getReleaseDate(),
+                film.getDuration(),
+                film.getMpa().getId(),
+                film.getId());
         return film;
     }
 
     @Override
     public Film getFilmForId(int id) {
-            String sqlQuery = "select * " +
-                    "from  MPA, FILMS  where FILMS.MPA_ID = MPA.MPA_ID and FILM_ID = ?";
-            try {
-                return jdbcTemplate.query(sqlQuery, this::findFilm, id).iterator().next();
-            } catch (RuntimeException e) {
-               throw new FilmIsNotFoundException("Не найден");
-            }
+        String sqlQuery = "select * " +
+                "from  MPA, FILMS  where FILMS.MPA_ID = MPA.MPA_ID and FILM_ID = ?";
+        try {
+            return jdbcTemplate.query(sqlQuery, this::findFilm, id).iterator().next();
+        } catch (RuntimeException e) {
+            throw new FilmIsNotFoundException("Не найден");
+        }
     }
 
     @Override

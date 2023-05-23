@@ -22,7 +22,7 @@ public class MpaDbStorage implements MpaStorage {
     @Override
     public List<Mpa> getMpaList() {
         String sqlMpa = "select * from MPA ";
-        return jdbcTemplate.query(sqlMpa,this::findMpa);
+        return jdbcTemplate.query(sqlMpa, this::findMpa);
     }
 
     @Override
