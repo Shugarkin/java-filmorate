@@ -7,6 +7,7 @@ drop table IF EXISTS LIKE_VAULT CASCADE;
 drop table IF EXISTS review CASCADE;
 drop table IF EXISTS review_likes CASCADE;
 drop table IF EXISTS review_dislikes CASCADE;
+drop table IF EXISTS FEED CASCADE;
 drop domain IF EXISTS EVENT_TYPE_ENUM CASCADE;
 
 
@@ -142,7 +143,7 @@ create table IF NOT EXISTS FEED
     constraint FEED_PK
     PRIMARY KEY (EVENT_ID),
     constraint FEED_USERS_FK
-    foreign key (USER_ID) references USERS(USER_ID)
+    foreign key (USER_ID) references USERS(USER_ID) ON DELETE CASCADE
 );
 
 create unique index if not exists USER_EMAIL_UINDEX on USERS (email);
