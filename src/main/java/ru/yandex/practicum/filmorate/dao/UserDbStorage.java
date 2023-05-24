@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.dao;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
@@ -8,13 +9,11 @@ import ru.yandex.practicum.filmorate.exception.UserIsNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import org.springframework.jdbc.core.JdbcTemplate;
-
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.List;
 
 @Component
 @Qualifier("UserDbStorage")
@@ -78,6 +77,12 @@ public class UserDbStorage implements UserStorage {
         }
     }
 
+    @Override
+    public void deleteUserById(int id) {
+        String sqlQuery = "delete from USERS where USER_ID = ?";
+        jdbcTemplate.update(sqlQuery, id);
+    }
+
     private User findUserById(ResultSet resultSet, int rowNum) throws SQLException {
         return User.builder()
                 .id(resultSet.getInt("USER_ID"))
@@ -87,4 +92,5 @@ public class UserDbStorage implements UserStorage {
                 .name(resultSet.getString("USERNAME"))
                 .build();
     }
+
 }

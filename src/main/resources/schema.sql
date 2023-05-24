@@ -4,9 +4,11 @@ drop table IF EXISTS GENRE_FILM CASCADE;
 drop table IF EXISTS USERS CASCADE;
 drop table IF EXISTS USER_FRIEND CASCADE;
 drop table IF EXISTS LIKE_VAULT CASCADE;
+drop table IF EXISTS FEED CASCADE;
 drop table IF EXISTS review CASCADE;
 drop table IF EXISTS review_likes CASCADE;
 drop table IF EXISTS review_dislikes CASCADE;
+drop domain IF EXISTS EVENT_TYPE_ENUM CASCADE;
 
 
 create table IF NOT EXISTS MPA
@@ -43,9 +45,9 @@ create table IF NOT EXISTS GENRE_FILM
     constraint GENRE_FILM_PK
     PRIMARY KEY (GENRE_FILM_ID),
     constraint GENRE_FILM_FILMS_FILM_ID_FK
-    foreign key (FILM_ID) references FILMS(FILM_ID),
+    foreign key (FILM_ID) references FILMS(FILM_ID) ON DELETE CASCADE,
     constraint GENRE_GENRE_FILM_GENRE_ID_FK
-    foreign key (GENRE_ID) references GENRE(GENRE_ID)
+    foreign key (GENRE_ID) references GENRE(GENRE_ID) ON DELETE CASCADE
     );
 
 create table IF NOT EXISTS USERS
@@ -67,9 +69,9 @@ create table IF NOT EXISTS USER_FRIEND
     constraint USER_FRIEND_PK
     PRIMARY KEY (FRIENDSHIP_ID),
     constraint USER_FRIEND_USERS_FRIENDSHIP_ID_FK
-    foreign key (USER_ID) references USERS,
+    foreign key (USER_ID) references USERS ON DELETE CASCADE,
     constraint USER_FRIEND_FRIEND_ID_FRIENDSHIP_ID_FK
-    foreign key (FRIEND_ID) references USERS
+    foreign key (FRIEND_ID) references USERS ON DELETE CASCADE
     );
 
 create table IF NOT EXISTS LIKE_VAULT
@@ -79,7 +81,7 @@ create table IF NOT EXISTS LIKE_VAULT
     constraint LIKE_VAULT_PK
     PRIMARY KEY (USER_ID, FILM_ID),
     constraint LIKE_VAULT_FILMS_FILM_ID_FK
-    foreign key (FILM_ID) references FILMS(FILM_ID),
+    foreign key (FILM_ID) references FILMS(FILM_ID) ON DELETE CASCADE,
     constraint LIKE_VAULT_USERS_USER_ID_FK
     foreign key (USER_ID) references USERS
 );
@@ -141,7 +143,7 @@ create table IF NOT EXISTS FEED
     constraint FEED_PK
     PRIMARY KEY (EVENT_ID),
     constraint FEED_USERS_FK
-    foreign key (USER_ID) references USERS(USER_ID)
+    foreign key (USER_ID) references USERS(USER_ID) ON DELETE CASCADE
 );
 
 create unique index if not exists USER_EMAIL_UINDEX on USERS (email);

@@ -39,6 +39,7 @@ public class FriendshipDbStorage implements FriendshipStorage {
         return list;
     }
 
+
     @Override
     public List<User> getListFriend(int userId, int friendId) {
         String ahaha = " SELECT *" +

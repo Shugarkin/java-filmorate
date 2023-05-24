@@ -7,13 +7,17 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.FilmIsNotFoundException;
 import ru.yandex.practicum.filmorate.model.Director;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Mpa;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
-import java.sql.*;
 import java.sql.Date;
-import java.util.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -81,6 +85,16 @@ public class FilmDbStorage implements FilmStorage {
             return jdbcTemplate.query(sqlQuery, this::findFilm, id).iterator().next();
         } catch (RuntimeException e) {
             throw new FilmIsNotFoundException("Не найден");
+        }
+    }
+
+    @Override
+    public void deleteFilmById(int id) {
+        String sqlQuery = "delete from FILMS where FILM_ID = ?";
+        try {
+            jdbcTemplate.update(sqlQuery, id);
+        } catch (RuntimeException e) {
+            throw new FilmIsNotFoundException("Фильм не найден");
         }
     }
 

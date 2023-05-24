@@ -83,4 +83,12 @@ public class UserService {
             user.setName(user.getLogin());
         }
     }
+
+    public void userDeleteById(int userId) { //метод удаления пользователя по id
+        if (userDbStorage.getUserForId(userId) == null) {
+            throw new UserIsNotFoundException("Пользователя такого нету((");
+        }
+        userDbStorage.deleteUserById(userId);
+    }
+
 }

@@ -61,6 +61,12 @@ public class UserController {
         return userService.getFriendsUserForId(id);
     }
 
+    @DeleteMapping("/{id}") //удаление пользователя по id
+    public void userDeleteById(@PathVariable("id") final Integer userId) {
+        userService.userDeleteById(userId);
+    }
+
+
     @GetMapping("/{id}/feed")
     public List<Feed> getFeed(@PathVariable("id") Integer id) {
         return userService.getFeed(id);
