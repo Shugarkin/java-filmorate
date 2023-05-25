@@ -162,7 +162,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public List<Film> getListFilm (List<Integer> list) {
+    public List<Film> getListFilm(List<Integer> list) {
         List<Film> listFilm = new ArrayList<>();
         for (Integer integer : list) {
             listFilm.add(getFilmForId(integer));
