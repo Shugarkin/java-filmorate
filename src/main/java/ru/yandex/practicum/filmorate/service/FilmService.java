@@ -124,6 +124,12 @@ public class FilmService {
         }
     }
 
+    public List<Film> getListFilm(List<Integer> list) {
+        List<Film> listFilm = filmStorage.getListFilm(list);
+        genreService.load(listFilm);
+        return listFilm;
+    }
+
     public void addDirectorToFilm(int filmId, int directorId) {
         filmStorage.addDirectorToFilm(filmId, directorId);
     }
