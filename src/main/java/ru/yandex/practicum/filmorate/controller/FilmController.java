@@ -49,8 +49,10 @@ public class FilmController {
 
     @GetMapping("/popular") //список популярных фильмов
     @Validated
-    public List<Film> getPopularFilms(@Positive @RequestParam(defaultValue = "10") Integer count) {
-        return filmService.getPopularFilms(count);
+    public List<Film> getPopularFilms(@Positive @RequestParam(defaultValue = "10") Integer count,
+                                      @Positive @RequestParam(required = false) Integer genreId,
+                                      @RequestParam(required = false) Integer year) {
+        return filmService.getPopularFilms(count, genreId, year);
     }
 
     @GetMapping("/{id}") //получение фильма по айди
@@ -62,5 +64,16 @@ public class FilmController {
     public List<Film> getCommonFilms(@RequestParam("userId") final Integer userId,
                                      @RequestParam("friendId") final Integer friendId) {
         return filmService.getCommonFilms(userId, friendId);
+    }
+}
+
+    @GetMapping("/director/{directorId}")
+    public List<Film> getFilmsByDirectorSorted(@PathVariable int directorId, @RequestParam String sortBy) {
+        return filmService.getFilmsByDirectorSorted(directorId, sortBy);
+    }
+
+    @DeleteMapping("/{id}") //удаление фильма по id
+    public void filmDeleteById(@PathVariable("id") final Integer filmId) {
+        filmService.filmDeleteById(filmId);
     }
 }
