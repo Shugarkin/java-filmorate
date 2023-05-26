@@ -8,6 +8,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.DirectorNotFoundException;
+import ru.yandex.practicum.filmorate.exception.FilmIsNotFoundException;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.DirectorStorage;
@@ -94,6 +95,18 @@ public class DirectorDbStorage implements DirectorStorage {
                     throw new DirectorNotFoundException("Режиссер не найден");
                 }
             }
+        }
+    }
+
+    @Override
+    public boolean isDirectorExistsByName(String name) {
+        String sqlQuery = "SELECT EXISTS (SELECT * FROM DIRECTORS WHERE DIRECTOR_NAME = ?)";
+        boolean result = jdbcTemplate.queryForObject(sqlQuery, Boolean.class, name);
+        if (result) {
+            return result;
+        } else {
+            log.warn("Режиссер по имени = {} не найден", name);
+            throw new FilmIsNotFoundException(String.format("Режиссер по имени = {} не найден", name));
         }
     }
 

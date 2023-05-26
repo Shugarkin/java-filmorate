@@ -3,14 +3,17 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.UserIsNotFoundException;
 import ru.yandex.practicum.filmorate.exception.DirectorNotFoundException;
+import ru.yandex.practicum.filmorate.exception.UserIsNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.*;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
-import java.util.*;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -130,5 +133,27 @@ public class FilmService {
 
     public Set<Director> getDirector(int filmId) {
         return filmStorage.getDirector(filmId);
+    }
+
+    public List<String> getListFilmsSortedByPopularity(String query, List<String> by) {
+        if (query == null) {
+            throw new ValidationException("Отсутствует строка запроса для поиска");
+        }
+        query = query.toLowerCase();
+        List<String> byToLowerCase = by.stream()
+                .map(String::toLowerCase)
+                .collect(Collectors.toList());
+        if (byToLowerCase.size() == 2) {
+            //List<String> listNameFilms = filmStorage.findFilmsByDirectorTitle(query);
+        } else if (byToLowerCase.size() == 1) {
+            if (directorService.isDirectorExists(byToLowerCase.get(0))) {
+                List<String> listNameFilms = filmStorage.findFilmsByDirector(query, byToLowerCase.get(0));
+            } else if (filmStorage.isFilmExistsByTitle(byToLowerCase.get(0))) {
+                List<String> listNameFilms = filmStorage.findFilmsByTitle(query, byToLowerCase.get(0));
+            }
+        } else {
+            throw new ValidationException("Неверно указан параметр");
+        }
+        return null;
     }
 }

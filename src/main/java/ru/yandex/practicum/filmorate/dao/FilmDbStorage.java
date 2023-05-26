@@ -1,10 +1,13 @@
 package ru.yandex.practicum.filmorate.dao;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.DirectorNotFoundException;
 import ru.yandex.practicum.filmorate.exception.FilmIsNotFoundException;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Mpa;
@@ -22,6 +25,7 @@ import java.util.stream.Collectors;
 
 @Component
 @Qualifier("FilmDbStorage")
+@Slf4j
 public class FilmDbStorage implements FilmStorage {
 
     private final JdbcTemplate jdbcTemplate;
@@ -136,6 +140,36 @@ public class FilmDbStorage implements FilmStorage {
     public void addDirectorToFilm(int filmId, int directorId) {
         String sqlQuery = "insert into film_director (film_id, director_id) values (?, ?)";
         jdbcTemplate.update(sqlQuery, filmId, directorId);
+    }
+
+    @Override
+    public List<String> findFilmsByDirector(String query, String director) {
+        String sqlQuery = "SELECT * FROM (SELECT FILM_NAME, DESCRIPTION, RELEASE_DATE, DURATION, MPA_ID, DIRECTOR_NAME " +
+                "FROM FILMS LEFT JOIN FILM_DIRECTOR FD on FILMS.FILM_ID = FD.FILM_ID " +
+                "LEFT JOIN DIRECTORS D on FD.DIRECTOR_ID = D.DIRECTOR_ID) as PZ " +
+                "where FILM_NAME LIKE ? and DIRECTOR_NAME LIKE ?";
+        List<String> listNameFilms = jdbcTemplate.queryForList(sqlQuery,
+                new String[]{"%" + query + "%", "%" + director + "%"}, String.class);
+
+        //return listNameFilms;
+        return null;
+    }
+
+    @Override
+    public List<String> findFilmsByTitle(String query, String title) {
+        return null;
+    }
+
+    @Override
+    public boolean isFilmExistsByTitle(String title) {
+        String sqlQuery = "SELECT EXISTS (SELECT * FROM FILMS WHERE FILM_NAME = ?)";
+        boolean result = jdbcTemplate.queryForObject(sqlQuery, Boolean.class, title);
+        if (result) {
+            return result;
+        } else {
+            log.warn("Фильм с названием = {} не найден", title);
+            throw new FilmIsNotFoundException(String.format("Фильм с названием = {} не найден", title));
+        }
     }
 
     private Film findFilm(ResultSet resultSet, int rowNum) throws SQLException {

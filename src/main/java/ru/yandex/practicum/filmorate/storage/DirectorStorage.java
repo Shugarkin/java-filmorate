@@ -22,4 +22,6 @@ public interface DirectorStorage {
     void addDirector(int filmId, int directorId);
 
     void updateDirectorInFilm(Film film);
+
+    boolean isDirectorExistsByName(String name);
 }
