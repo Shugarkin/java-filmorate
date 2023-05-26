@@ -34,7 +34,7 @@ public class FilmController {
 
     @PutMapping
     public Film updateFilm(@Valid @RequestBody Film film) { //обновление фильма
-       return filmService.updateFilm(film);
+        return filmService.updateFilm(film);
     }
 
     @PutMapping("/{id}/like/{userId}") //добавление лайка
@@ -56,5 +56,11 @@ public class FilmController {
     @GetMapping("/{id}") //получение фильма по айди
     public Film getFilmForId(@PathVariable("id") int id) {
         return filmService.getFilmForId(id);
+    }
+
+    @GetMapping("/common") //список общих фильмов
+    public List<Film> getCommonFilms(@RequestParam("userId") final Integer userId,
+                                     @RequestParam("friendId") final Integer friendId) {
+        return filmService.getCommonFilms(userId, friendId);
     }
 }

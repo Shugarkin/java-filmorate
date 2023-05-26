@@ -28,4 +28,8 @@ public class LikeService {
     public List<Film> getPopularFilms(Integer end) {
         return likeStorage.getPopularFilms(end);
     }
+
+    public List<Film> getCommonFilms(Integer userId, Integer friendId) {
+        return likeStorage.getCommonFilms(userId, friendId);
+    }
 }

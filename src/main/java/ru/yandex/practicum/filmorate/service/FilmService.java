@@ -5,9 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.*;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
-import java.util.*;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -41,14 +41,15 @@ public class FilmService {
     }
 
     public List<Film> getPopularFilms(Integer end) {
-        log.info("Получен список популярных фильмов колличесвом {} фильмов.", end);
+        log.info("Получен список популярных фильмов количеством {} фильмов.", end);
         List<Film> list = likeService.getPopularFilms(end);
         genreService.load(list);
         return list;
     }
 
     public List<Film> getAllFilms() {
-        List<Film> films = filmStorage.getAllFilms();;
+        List<Film> films = filmStorage.getAllFilms();
+        ;
         genreService.load(films);
         return films;
     }
@@ -77,5 +78,12 @@ public class FilmService {
         Film film = filmStorage.getFilmForId(id);
         genreService.load(List.of(film));
         return film;
+    }
+
+    public List<Film> getCommonFilms(Integer userId, Integer friendId) {
+        List<Film> commonFilms = likeService.getCommonFilms(userId, friendId);
+        log.info("Получен список популярных фильмов количеством {} фильмов.", commonFilms.size());
+        genreService.load(commonFilms);
+        return commonFilms;
     }
 }

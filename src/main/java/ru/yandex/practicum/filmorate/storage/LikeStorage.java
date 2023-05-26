@@ -12,5 +12,5 @@ public interface LikeStorage {
 
     List<Film> getPopularFilms(Integer end);
 
-
+    List<Film> getCommonFilms(Integer userId, Integer friendId);
 }
