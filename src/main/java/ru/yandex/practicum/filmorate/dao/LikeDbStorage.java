@@ -68,16 +68,32 @@ public class LikeDbStorage implements LikeStorage {
                 " right join GENRE_FILM on FILMS.FILM_ID = GENRE_FILM.FILM_ID " +
                 " where GENRE_ID = ? " +
                 " GROUP BY FILMS.FILM_ID " +
-                " ORDER BY COUNT(LIKE_VAULT.USER_ID) DESC " +
-                " limit ?";
+                " ORDER BY COUNT(USER_ID) " +
+                " DESC limit ?;";
+    }
+
+    public List<Film> getCommonFilms(Integer userId, Integer friendId) {
+        String filmRows = "select FILMS.film_id, FILMS.film_name, FILMS.description, FILMS.release_date, FILMS.duration, FILMS.mpa_id, " +
+                "MPA.mpa_name, DIRECTORS.DIRECTOR_ID, DIRECTORS.DIRECTOR_NAME " +
+                "FROM FILMS " +
+                "JOIN MPA ON FILMS.MPA_ID = MPA.MPA_ID  " +
+                "JOIN LIKE_VAULT LV1 " +
+                "ON FILMS.FILM_ID = LV1.FILM_ID " +
+                "JOIN LIKE_VAULT LV2 " +
+                " ON FILMS.FILM_ID = LV2.FILM_ID " +
+                "left JOIN FILM_DIRECTOR ON FILMS.FILM_ID = FILM_DIRECTOR.FILM_ID " +
+                "left join DIRECTORS on FILM_DIRECTOR.DIRECTOR_ID = DIRECTORS.DIRECTOR_ID " +
+                "WHERE LV1.USER_ID = ? AND LV2.USER_ID = ?";
+        List<Film> list = jdbcTemplate.query(filmRows, this::getFilmId, userId, friendId);
+        return jdbcTemplate.query(filmRows, this::getFilmId, userId, friendId);
     }
 
     private String getSqlWithYear() {
-        return "select FILMS.film_id, FILMS.film_name, FILMS.description, FILMS.release_date, FILMS.duration, FILMS.mpa_id," +
-                "MPA.mpa_name, DIRECTORS.DIRECTOR_ID, DIRECTORS.DIRECTOR_NAME " +
+        return "select FILMS.film_id, FILMS.film_name, FILMS.description, FILMS.release_date, FILMS.duration, FILMS.mpa_id, " +
+                " MPA.mpa_name, DIRECTORS.DIRECTOR_ID, DIRECTORS.DIRECTOR_NAME " +
                 " from LIKE_VAULT right JOIN FILMS ON LIKE_VAULT.FILM_ID = FILMS.FILM_ID " +
-                "left JOIN FILM_DIRECTOR ON FILMS.FILM_ID = FILM_DIRECTOR.FILM_ID " +
-                "left join DIRECTORS on FILM_DIRECTOR.DIRECTOR_ID = DIRECTORS.DIRECTOR_ID " +
+                " left JOIN FILM_DIRECTOR ON FILMS.FILM_ID = FILM_DIRECTOR.FILM_ID " +
+                " left join DIRECTORS on FILM_DIRECTOR.DIRECTOR_ID = DIRECTORS.DIRECTOR_ID " +
                 " join MPA on FILMS.MPA_ID = MPA.MPA_ID " +
                 " where EXTRACT(YEAR FROM(FILMS.RELEASE_DATE)) = ?" +
                 " GROUP BY FILMS.FILM_ID " +
@@ -137,5 +153,4 @@ public class LikeDbStorage implements LikeStorage {
         }
         return set;
     }
-
 }

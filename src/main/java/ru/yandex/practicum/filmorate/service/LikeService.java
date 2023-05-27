@@ -36,4 +36,7 @@ public class LikeService {
         return likeStorage.getPopularFilms(end, genreId, year);
     }
 
+    public List<Film> getCommonFilms(Integer userId, Integer friendId) {
+        return likeStorage.getCommonFilms(userId, friendId);
+    }
 }
