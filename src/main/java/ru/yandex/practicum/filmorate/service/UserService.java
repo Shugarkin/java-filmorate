@@ -5,10 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dao.UserDbStorage;
 import ru.yandex.practicum.filmorate.exception.UserIsNotFoundException;
-import ru.yandex.practicum.filmorate.model.EventType;
-import ru.yandex.practicum.filmorate.model.Feed;
-import ru.yandex.practicum.filmorate.model.Operation;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.*;
@@ -23,11 +20,18 @@ public class UserService {
 
     private FeedService feedService;
 
+    private RecommendationService recommendationService;
+
+    private FilmService filmService;
+
     @Autowired
-    public UserService(UserDbStorage userDbStorage, FriendshipService friendshipService, FeedService feedService) {
+    public UserService(UserDbStorage userDbStorage, FriendshipService friendshipService,
+                       FeedService feedService, RecommendationService recommendationService, FilmService filmService) {
         this.userDbStorage = userDbStorage;
         this.friendshipService = friendshipService;
         this.feedService = feedService;
+        this.recommendationService = recommendationService;
+        this.filmService = filmService;
     }
 
     public void userAddFriend(int userId, int friendId) { //метод добавления в друзья
@@ -91,4 +95,7 @@ public class UserService {
         userDbStorage.deleteUserById(userId);
     }
 
+    public List<Film> getRecommendation(Integer userId) {
+        return filmService.getListFilm(recommendationService.getRecommendation(userId));
+    }
 }
