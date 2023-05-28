@@ -13,7 +13,6 @@ import java.util.Map;
 
 @Component
 public class LikeExtractor implements ResultSetExtractor<Map<Integer, List<Integer>>> {
-    @Override
     public Map<Integer, List<Integer>> extractData(ResultSet rs) throws SQLException, DataAccessException {
         Map<Integer, List<Integer>> userLikes = new HashMap<>();
         while (rs.next()) {
