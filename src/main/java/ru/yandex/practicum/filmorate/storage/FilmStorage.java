@@ -27,4 +27,11 @@ public interface FilmStorage {
     void addDirectorToFilm(int filmId, int directorId);
 
     List<Film> getListFilm(List<Integer> list);
+
+    List<Film> findFilmsByDirector(String query);
+
+    List<Film> findFilmsByTitle(String query);
+
+    List<Film> findFilmsByDirectorTitle(String query);
+
 }

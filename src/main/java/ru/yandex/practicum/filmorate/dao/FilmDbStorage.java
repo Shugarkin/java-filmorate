@@ -7,8 +7,8 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.FilmIsNotFoundException;
 import ru.yandex.practicum.filmorate.model.Director;
-import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.sql.Date;
@@ -137,6 +137,46 @@ public class FilmDbStorage implements FilmStorage {
     public void addDirectorToFilm(int filmId, int directorId) {
         String sqlQuery = "insert into film_director (film_id, director_id) values (?, ?)";
         jdbcTemplate.update(sqlQuery, filmId, directorId);
+    }
+
+    @Override
+    public List<Film> findFilmsByDirector(String query) {
+        String sqlQuery = "SELECT * FROM FILMS join MPA on FILMS.MPA_ID = MPA.MPA_ID " +
+                "LEFT JOIN FILM_DIRECTOR FD on FILMS.FILM_ID = FD.FILM_ID " +
+                "LEFT JOIN DIRECTORS D on FD.DIRECTOR_ID = D.DIRECTOR_ID " +
+                "LEFT JOIN LIKE_VAULT ON films.FILM_ID = LIKE_VAULT.FILM_ID " +
+                "WHERE LOWER(D.DIRECTOR_NAME) like ? " +
+                "GROUP BY FILMS.FILM_ID " +
+                "ORDER BY COUNT(LIKE_VAULT.USER_ID) DESC";
+        return jdbcTemplate.query(sqlQuery, this::findFilm, "%" + query + "%");
+    }
+
+    @Override
+    public List<Film> findFilmsByTitle(String query) {
+        String sql = "SELECT * " +
+                "FROM FILMS " +
+                "join MPA on FILMS.MPA_ID = MPA.MPA_ID " +
+                "LEFT JOIN FILM_DIRECTOR FD on FILMS.FILM_ID = FD.FILM_ID " +
+                "LEFT JOIN DIRECTORS D on FD.DIRECTOR_ID = D.DIRECTOR_ID " +
+                "LEFT JOIN LIKE_VAULT ON films.FILM_ID = LIKE_VAULT.FILM_ID " +
+                "WHERE LOWER(FILMS.FILM_NAME) like ? " +
+                "GROUP BY FILMS.FILM_ID " +
+                "ORDER BY COUNT(LIKE_VAULT.USER_ID) DESC ";
+        return jdbcTemplate.query(sql, this::findFilm, "%" + query + "%");
+    }
+
+    @Override
+    public List<Film> findFilmsByDirectorTitle(String query) {
+        String sql = "SELECT * " +
+                "FROM FILMS " +
+                "join MPA on FILMS.MPA_ID = MPA.MPA_ID " +
+                "LEFT JOIN FILM_DIRECTOR FD on FILMS.FILM_ID = FD.FILM_ID " +
+                "LEFT JOIN DIRECTORS D on FD.DIRECTOR_ID = D.DIRECTOR_ID " +
+                "LEFT JOIN LIKE_VAULT ON films.FILM_ID = LIKE_VAULT.FILM_ID " +
+                "WHERE LOWER(FILMS.FILM_NAME) like ? or LOWER(D.DIRECTOR_NAME) like ? " +
+                "GROUP BY FILMS.FILM_ID " +
+                "ORDER BY COUNT(LIKE_VAULT.USER_ID) DESC ";
+        return jdbcTemplate.query(sql, this::findFilm, "%" + query + "%", "%" + query + "%");
     }
 
     private Film findFilm(ResultSet resultSet, int rowNum) throws SQLException {
