@@ -24,9 +24,11 @@ public class UserService {
 
     private FilmService filmService;
 
+
     @Autowired
     public UserService(UserDbStorage userDbStorage, FriendshipService friendshipService,
-                       FeedService feedService, RecommendationService recommendationService, FilmService filmService) {
+                       FeedService feedService, RecommendationService recommendationService,
+                       FilmService filmService) {
         this.userDbStorage = userDbStorage;
         this.friendshipService = friendshipService;
         this.feedService = feedService;
@@ -69,7 +71,7 @@ public class UserService {
     }
 
     public List<User> getFriendsUserForId(Integer id) {
-        if (getUserForId(id) == null)  {
+        if (getUserForId(id) == null) {
             throw new UserIsNotFoundException("Пользователя такого нету((");
         }
         return friendshipService.getFriendsUserForId(id);
@@ -99,3 +101,4 @@ public class UserService {
         return filmService.getListFilm(recommendationService.getRecommendation(userId));
     }
 }
+
