@@ -3,8 +3,8 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.UserIsNotFoundException;
 import ru.yandex.practicum.filmorate.exception.DirectorNotFoundException;
+import ru.yandex.practicum.filmorate.exception.UserIsNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -145,5 +145,29 @@ public class FilmService {
 
     public Set<Director> getDirector(int filmId) {
         return filmStorage.getDirector(filmId);
+    }
+
+    public List<Film> getListFilmsSortedByPopularity(String query, List<String> by) {
+        if (query == null) {
+            throw new ValidationException("Отсутствует строка запроса для поиска");
+        }
+        query = query.toLowerCase();
+        List<Film> listNameFilms = null;
+        if (by.size() == 2) {
+            listNameFilms = filmStorage.findFilmsByDirectorTitle(query);
+            genreService.load(listNameFilms);
+            return listNameFilms;
+        } else if (by.size() == 1) {
+            if (by.get(0).equals("director")) {
+                listNameFilms = filmStorage.findFilmsByDirector(query);
+                genreService.load(listNameFilms);
+            } else if (by.get(0).equals("title")) {
+                listNameFilms = filmStorage.findFilmsByTitle(query);
+                genreService.load(listNameFilms);
+            }
+            return listNameFilms;
+        } else {
+            throw new ValidationException("Неверно указан параметр");
+        }
     }
 }
