@@ -146,7 +146,7 @@ public class FilmDbStorage implements FilmStorage {
                 "LEFT JOIN DIRECTORS D on FD.DIRECTOR_ID = D.DIRECTOR_ID " +
                 "LEFT JOIN LIKE_VAULT ON films.FILM_ID = LIKE_VAULT.FILM_ID " +
                 "WHERE LOWER(D.DIRECTOR_NAME) like ? " +
-                "GROUP BY FILMS.FILM_ID " +
+                "GROUP BY FILMS.FILM_ID, LIKE_VAULT.USER_ID " +
                 "ORDER BY COUNT(LIKE_VAULT.USER_ID) DESC";
         return jdbcTemplate.query(sqlQuery, this::findFilm, "%" + query + "%");
     }
@@ -160,7 +160,7 @@ public class FilmDbStorage implements FilmStorage {
                 "LEFT JOIN DIRECTORS D on FD.DIRECTOR_ID = D.DIRECTOR_ID " +
                 "LEFT JOIN LIKE_VAULT ON films.FILM_ID = LIKE_VAULT.FILM_ID " +
                 "WHERE LOWER(FILMS.FILM_NAME) like ? " +
-                "GROUP BY FILMS.FILM_ID " +
+                "GROUP BY FILMS.FILM_ID, LIKE_VAULT.USER_ID " +
                 "ORDER BY COUNT(LIKE_VAULT.USER_ID) DESC ";
         return jdbcTemplate.query(sql, this::findFilm, "%" + query + "%");
     }
