@@ -28,15 +28,15 @@ public class RecommendationsDbStorage implements RecommendationsStorage {
         List<Integer> listOfUsersWithCommon = new ArrayList<>(); //лист для id пользователей у которых есть совпадения с нашим
         for (Map.Entry<Integer, List<Integer>> entry : usersFilms.entrySet()) { //здесь идет перебор
             for (Integer integer : entry.getValue()) { //каждый фильм остальных пользователей
-                for (Integer integer1 : user) {//сверяется с нашим
+                for (Integer integer1 : user) { //сверяется с нашим
                     if (integer1 == integer) {
-                        listOfUsersWithCommon.add(entry.getKey());//и id пользователя с совпадениями добавляется в лист
+                        listOfUsersWithCommon.add(entry.getKey()); //и id пользователя с совпадениями добавляется в лист
                     }
                 }
             }
         }
 
-        if (!listOfUsersWithCommon.isEmpty()) {//если лист не пустой
+        if (!listOfUsersWithCommon.isEmpty()) { //если лист не пустой
             //здесь вообще магия. подсмотрел в интернете. в кратце: сколько раз пользователь повторялся в листе, столько у него значение
             Map<Integer, Long> frequency =
                     listOfUsersWithCommon.stream().collect(Collectors.groupingBy(
@@ -49,7 +49,7 @@ public class RecommendationsDbStorage implements RecommendationsStorage {
             //здесь их мапы всех фильмов берется тот юзер с которым больше пересечений
             // и у него удаляются те фильмы с которыми есть совпадения с нашим пользователем
             usersFilms.get(maxKey.getKey()).removeIf(s -> user.contains(s));
-            return usersFilms.get(maxKey.getKey());//соответственно получаем фильмы которые остались
+            return usersFilms.get(maxKey.getKey()); //соответственно получаем фильмы которые остались
         }
         return List.of();
     }
