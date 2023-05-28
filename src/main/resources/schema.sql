@@ -80,9 +80,6 @@ create table IF NOT EXISTS LIKE_VAULT
 (
     FILM_ID INTEGER not null,
     USER_ID INTEGER not null,
-    constraint LIKE_VAULT_PK
-    PRIMARY KEY (USER_ID, FILM_ID),
-    constraint LIKE_VAULT_FILMS_FILM_ID_FK
     foreign key (FILM_ID) references FILMS(FILM_ID) ON DELETE CASCADE,
     constraint LIKE_VAULT_USERS_USER_ID_FK
     foreign key (USER_ID) references USERS
