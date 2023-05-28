@@ -8,9 +8,11 @@ import ru.yandex.practicum.filmorate.exception.DirectorNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.*;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
-import java.util.*;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -95,6 +97,13 @@ public class FilmService {
         Film film = filmStorage.getFilmForId(id);
         genreService.load(List.of(film));
         return film;
+    }
+
+    public List<Film> getCommonFilms(Integer userId, Integer friendId) {
+        List<Film> commonFilms = likeService.getCommonFilms(userId, friendId);
+        log.info("Получен список популярных фильмов количеством {} фильмов.", commonFilms.size());
+        genreService.load(commonFilms);
+        return commonFilms;
     }
 
     public void filmDeleteById(int filmId) { //метод удаления фильма по id
