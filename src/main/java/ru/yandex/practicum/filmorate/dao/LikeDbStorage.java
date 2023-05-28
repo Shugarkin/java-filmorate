@@ -32,9 +32,13 @@ public class LikeDbStorage implements LikeStorage {
 
     @Override
     public void addLike(Integer filmId, Integer userId) {
-        String sqlLike = "insert into LIKE_VAULT (FILM_ID, USER_ID)"
-                + " values(?,?)";
-        jdbcTemplate.update(sqlLike, filmId, userId);
+        try {
+            String sqlLike = "insert into LIKE_VAULT (FILM_ID, USER_ID)"
+                    + " values(?,?)";
+            jdbcTemplate.update(sqlLike, filmId, userId);
+        } catch (RuntimeException e) {
+            System.out.println("Попытка добавить существующий фильм");
+        }
     }
 
     @Override

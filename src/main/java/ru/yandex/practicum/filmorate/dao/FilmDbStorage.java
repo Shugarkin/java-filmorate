@@ -141,12 +141,14 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> findFilmsByDirector(String query) {
-        String sqlQuery = "SELECT * FROM FILMS join MPA on FILMS.MPA_ID = MPA.MPA_ID " +
-                "LEFT JOIN FILM_DIRECTOR FD on FILMS.FILM_ID = FD.FILM_ID " +
-                "LEFT JOIN DIRECTORS D on FD.DIRECTOR_ID = D.DIRECTOR_ID " +
-                "LEFT JOIN LIKE_VAULT ON films.FILM_ID = LIKE_VAULT.FILM_ID " +
-                "WHERE LOWER(D.DIRECTOR_NAME) like ? " +
-                "GROUP BY FILMS.FILM_ID, LIKE_VAULT.USER_ID " +
+        String sqlQuery = "select FILMS.film_id, FILMS.film_name, FILMS.description, FILMS.release_date, FILMS.duration, FILMS.mpa_id, " +
+                "MPA.mpa_name, DIRECTORS.DIRECTOR_ID, DIRECTORS.DIRECTOR_NAME " +
+                "from LIKE_VAULT right JOIN FILMS ON LIKE_VAULT.FILM_ID = FILMS.FILM_ID " +
+                "left JOIN FILM_DIRECTOR ON FILMS.FILM_ID = FILM_DIRECTOR.FILM_ID " +
+                "left join DIRECTORS on FILM_DIRECTOR.DIRECTOR_ID = DIRECTORS.DIRECTOR_ID " +
+                "join MPA on FILMS.MPA_ID = MPA.MPA_ID " +
+                "where LOWER(DIRECTORS.DIRECTOR_NAME) like ? " +
+                "GROUP BY FILMS.FILM_ID " +
                 "ORDER BY COUNT(LIKE_VAULT.USER_ID) DESC";
         return jdbcTemplate.query(sqlQuery, this::findFilm, "%" + query + "%");
     }
@@ -167,15 +169,15 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> findFilmsByDirectorTitle(String query) {
-        String sql = "SELECT * " +
-                "FROM FILMS " +
+        String sql = "select FILMS.film_id, FILMS.film_name, FILMS.description, FILMS.release_date, FILMS.duration, FILMS.mpa_id, " +
+                "MPA.mpa_name, DIRECTORS.DIRECTOR_ID, DIRECTORS.DIRECTOR_NAME " +
+                "from LIKE_VAULT right JOIN FILMS ON LIKE_VAULT.FILM_ID = FILMS.FILM_ID " +
+                "left JOIN FILM_DIRECTOR ON FILMS.FILM_ID = FILM_DIRECTOR.FILM_ID " +
+                "left join DIRECTORS on FILM_DIRECTOR.DIRECTOR_ID = DIRECTORS.DIRECTOR_ID " +
                 "join MPA on FILMS.MPA_ID = MPA.MPA_ID " +
-                "LEFT JOIN FILM_DIRECTOR FD on FILMS.FILM_ID = FD.FILM_ID " +
-                "LEFT JOIN DIRECTORS D on FD.DIRECTOR_ID = D.DIRECTOR_ID " +
-                "LEFT JOIN LIKE_VAULT ON films.FILM_ID = LIKE_VAULT.FILM_ID " +
-                "WHERE LOWER(FILMS.FILM_NAME) like ? or LOWER(D.DIRECTOR_NAME) like ? " +
-                "GROUP BY FILMS.FILM_ID, LIKE_VAULT.USER_ID " +
-                "ORDER BY COUNT(LIKE_VAULT.USER_ID) DESC ";
+                "where LOWER(FILMS.FILM_NAME) like ? or LOWER(DIRECTORS.DIRECTOR_NAME) like ? " +
+                "GROUP BY FILMS.FILM_ID " +
+                "ORDER BY COUNT(LIKE_VAULT.USER_ID) DESC";
         return jdbcTemplate.query(sql, this::findFilm, "%" + query + "%", "%" + query + "%");
     }
 
