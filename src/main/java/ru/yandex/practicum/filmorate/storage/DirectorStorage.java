@@ -23,5 +23,4 @@ public interface DirectorStorage {
 
     void updateDirectorInFilm(Film film);
 
-    boolean isDirectorExistsByName(String name);
 }

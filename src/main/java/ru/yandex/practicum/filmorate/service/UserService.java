@@ -65,7 +65,7 @@ public class UserService {
     }
 
     public List<User> getFriendsUserForId(Integer id) {
-        if (getUserForId(id) == null)  {
+        if (getUserForId(id) == null) {
             throw new UserIsNotFoundException("Пользователя такого нету((");
         }
         return friendshipService.getFriendsUserForId(id);

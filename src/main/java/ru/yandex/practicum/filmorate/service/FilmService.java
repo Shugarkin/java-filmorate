@@ -13,7 +13,6 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -135,25 +134,27 @@ public class FilmService {
         return filmStorage.getDirector(filmId);
     }
 
-    public List<String> getListFilmsSortedByPopularity(String query, List<String> by) {
+    public List<Film> getListFilmsSortedByPopularity(String query, List<String> by) {
         if (query == null) {
             throw new ValidationException("Отсутствует строка запроса для поиска");
         }
         query = query.toLowerCase();
-        List<String> byToLowerCase = by.stream()
-                .map(String::toLowerCase)
-                .collect(Collectors.toList());
-        if (byToLowerCase.size() == 2) {
-            //List<String> listNameFilms = filmStorage.findFilmsByDirectorTitle(query);
-        } else if (byToLowerCase.size() == 1) {
-            if (directorService.isDirectorExists(byToLowerCase.get(0))) {
-                List<String> listNameFilms = filmStorage.findFilmsByDirector(query, byToLowerCase.get(0));
-            } else if (filmStorage.isFilmExistsByTitle(byToLowerCase.get(0))) {
-                List<String> listNameFilms = filmStorage.findFilmsByTitle(query, byToLowerCase.get(0));
+        List<Film> listNameFilms = null;
+        if (by.size() == 2) {
+            listNameFilms = filmStorage.findFilmsByDirectorTitle(query);
+            genreService.load(listNameFilms);
+            return listNameFilms;
+        } else if (by.size() == 1) {
+            if (by.get(0).equals("director")) {
+                listNameFilms = filmStorage.findFilmsByDirector(query);
+                genreService.load(listNameFilms);
+            } else if (by.get(0).equals("title")) {
+                listNameFilms = filmStorage.findFilmsByTitle(query);
+                genreService.load(listNameFilms);
             }
+            return listNameFilms;
         } else {
             throw new ValidationException("Неверно указан параметр");
         }
-        return null;
     }
 }

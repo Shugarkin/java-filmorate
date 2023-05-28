@@ -49,7 +49,4 @@ public class DirectorService {
         directorStorage.updateDirectorInFilm(film);
     }
 
-    public boolean isDirectorExists(String name) {
-        return directorStorage.isDirectorExistsByName(name);
-    }
 }

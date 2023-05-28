@@ -71,8 +71,8 @@ public class FilmController {
     }
 
     @GetMapping("/search") // Возвращает список фильмов, отсортированных по популярности.
-    public List<String> returnListFilmsSortedByPopularity(@RequestParam(required = false) String query,
-                                      @RequestParam(required = false) List<String> by) {
+    public List<Film> returnListFilmsSortedByPopularity(@RequestParam(required = false) String query,
+                                                        @RequestParam(required = false) List<String> by) {
         return filmService.getListFilmsSortedByPopularity(query, by);
     }
 
