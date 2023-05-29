@@ -2,12 +2,12 @@ package ru.yandex.practicum.filmorate.dao;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.model.LikeExtractor;
+import ru.yandex.practicum.filmorate.exception.UserIsNotFoundException;
 import ru.yandex.practicum.filmorate.storage.RecommendationsStorage;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Component
 public class RecommendationsDbStorage implements RecommendationsStorage {
@@ -21,37 +21,35 @@ public class RecommendationsDbStorage implements RecommendationsStorage {
 
     @Override
     public List<Integer> getRecommendation(int userId) {
-        LikeExtractor likeExtractor = new LikeExtractor();
-        String sql = "SELECT *  FROM like_vault";
-        Map<Integer, List<Integer>> usersFilms = jdbcTemplate.query(sql, likeExtractor); //получаем все фильмы
-        List<Integer> user = usersFilms.remove(userId);//удаляем и сразу же сохраняем в лист пользователя id которого пришло
-        List<Integer> listOfUsersWithCommon = new ArrayList<>(); //лист для id пользователей у которых есть совпадения с нашим
-        for (Map.Entry<Integer, List<Integer>> entry : usersFilms.entrySet()) { //здесь идет перебор
-            for (Integer integer : entry.getValue()) { //каждый фильм остальных пользователей
-                for (Integer integer1 : user) { //сверяется с нашим
-                    if (integer1 == integer) {
-                        listOfUsersWithCommon.add(entry.getKey()); //и id пользователя с совпадениями добавляется в лист
-                    }
-                }
-            }
+        List<Integer> list;
+        try {
+            list = getListRecommendation(userId);
+        } catch (RuntimeException e) {
+            throw new UserIsNotFoundException("У данного пользователя нет рекомендаций.");
         }
+        return list;
+    }
 
-        if (!listOfUsersWithCommon.isEmpty()) { //если лист не пустой
-            //здесь вообще магия. подсмотрел в интернете. в кратце: сколько раз пользователь повторялся в листе, столько у него значение
-            Map<Integer, Long> frequency =
-                    listOfUsersWithCommon.stream().collect(Collectors.groupingBy(
-                            Function.identity(), Collectors.counting())); //мапа где ключ это userId а значение фильмы
+    private List<Integer> getListRecommendation(int userId) {
+        String sql = "SELECT FILM_ID " + //нужны айди фильмов
+                "FROM LIKE_VAULT " + //из хранилища лайков
+                "WHERE USER_ID in " + //у которых юзер их числа тех
+                "(SELECT user_id " + //юзеров
+                "FROM LIKE_VAULT " + //из хранилища лайков
+                "WHERE FILM_ID in " + //у которых фильмы
+                "(SELECT film_id " + //вот эти
+                "FROM LIKE_VAULT " + //да-да
+                "WHERE USER_ID  = ?) AND NOT USER_ID = ? " + //такие же как у юзера которого передали, но без учета его самого
+                "GROUP BY USER_ID " + //группировать
+                "ORDER BY count(USER_ID) DESC " + //сортировать по количеству айди юзеров, ибо чем больше количество тем больше совпадений с получателем рекомендации
+                "LIMIT 1)" + //нам нужен только один юзер
+                " AND not FILM_ID IN (SELECT FILM_ID FROM LIKE_VAULT WHERE USER_ID = ?)"; //и убираем из результатов те фильмы, что были у пользователя,
+                                                                                          // чтобы получить рекомендационные
+        return jdbcTemplate.query(sql, this::findRecommendation, userId, userId, userId);
+    }
 
-            //тоже в интернете нашел. здесь находится юзер с максимальным значением из превидущей мапы
-            //мапа в которой ключ это userId с максимальным значением повторения фильмов
-            Map.Entry<Integer, Long> maxKey = Collections.max(frequency.entrySet(), Map.Entry.comparingByValue());
-
-            //здесь их мапы всех фильмов берется тот юзер с которым больше пересечений
-            // и у него удаляются те фильмы с которыми есть совпадения с нашим пользователем
-            usersFilms.get(maxKey.getKey()).removeIf(s -> user.contains(s));
-            return usersFilms.get(maxKey.getKey()); //соответственно получаем фильмы которые остались
-        }
-        return List.of();
+    private Integer findRecommendation(ResultSet resultSet, int rowNum) throws SQLException {
+        return resultSet.getInt("FILM_ID");
     }
 
 

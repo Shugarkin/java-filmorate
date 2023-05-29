@@ -34,4 +34,5 @@ public interface FilmStorage {
 
     List<Film> findFilmsByDirectorTitle(String query);
 
+    Integer getFilm(Integer idReview);
 }

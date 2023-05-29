@@ -20,10 +20,16 @@ public class ReviewService {
 
     private final FeedService feedService;
 
+    private final FilmService filmService;
+
+    private final UserService userService;
+
     @Autowired
-    public ReviewService(ReviewStorage reviewStorage, FeedService feedService) {
+    public ReviewService(ReviewStorage reviewStorage, FeedService feedService, FilmService filmService, UserService userService) {
         this.reviewStorage = reviewStorage;
         this.feedService = feedService;
+        this.filmService = filmService;
+        this.userService = userService;
     }
 
     public Review createReview(Review review) {
@@ -49,19 +55,23 @@ public class ReviewService {
     }
 
     public Review updateReview(Review review) {
+        int userId = userService.getUser(review.getReviewId());
+        int filmId = filmService.getFilm(review.getReviewId());
 
-        feedService.addFeed(reviewStorage.getUser(review.getReviewId()), review.getReviewId(),
+
+        feedService.addFeed(userId, review.getReviewId(),
                 EventType.REVIEW, Operation.UPDATE);// получение id пользователя через методы нужно из-за проблемы с тестами
         reviewStorage.updateReview(review);
 
         //добавил изменение id пользователя и фильма из=за проблемы с тестами. потом их удалим
-        review.setUserId(reviewStorage.getUser(review.getReviewId()));
-        review.setFilmId(reviewStorage.getFilm(review.getReviewId()));
+        review.setUserId(userId);
+        review.setFilmId(filmId);
         return review;
     }
 
     public void deleteReviewById(Integer reviewId) {
-        feedService.addFeed(reviewStorage.getUser(reviewId), reviewId, EventType.REVIEW, Operation.REMOVE);
+        int userId = userService.getUser(reviewId);
+        feedService.addFeed(userId, reviewId, EventType.REVIEW, Operation.REMOVE);
         reviewStorage.deleteReviewById(reviewId);
     }
 

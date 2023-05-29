@@ -147,9 +147,16 @@ public class FilmService {
         return filmStorage.getDirector(filmId);
     }
 
+    public Integer getFilm(Integer idReview) {
+        return filmStorage.getFilm(idReview);
+    }
+
     public List<Film> getListFilmsSortedByPopularity(String query, List<String> by) {
         if (query == null) {
             throw new ValidationException("Отсутствует строка запроса для поиска");
+        }
+        if (by.isEmpty() || by == null || !by.contains("director") && !by.contains("title")) {
+            throw new ValidationException("Параметр не может быть пустым или null и должен быть 'director' или 'title'");
         }
         query = query.toLowerCase();
         List<Film> listNameFilms = null;
