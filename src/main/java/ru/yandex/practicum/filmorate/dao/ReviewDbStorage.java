@@ -18,6 +18,7 @@ import java.util.List;
 public class ReviewDbStorage implements ReviewStorage {
 
     private final JdbcTemplate jdbcTemplate;
+    int count = 1;
 
     public ReviewDbStorage(JdbcTemplate jdbcTemplate) {
 
@@ -27,20 +28,17 @@ public class ReviewDbStorage implements ReviewStorage {
     @Override
     public Review addReview(Review review) {
 
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-
+        //KeyHolder keyHolder = new GeneratedKeyHolder();
         String sqlQuery = "insert into review (content_review, is_Positive, user_id, film_id, useful)"
                 + " values(?, ?, ?, ?, ?)";
-        jdbcTemplate.update(connection -> {
-            PreparedStatement stmt = connection.prepareStatement(sqlQuery, new String[]{"reviewId"});
-            stmt.setString(1, review.getContent());
-            stmt.setBoolean(2, review.getIsPositive());
-            stmt.setInt(3, review.getUserId());
-            stmt.setInt(4, review.getFilmId());
-            stmt.setInt(5, review.getUseful());
-            return stmt;
-        }, keyHolder);
-        review.setReviewId(keyHolder.getKey().intValue());
+        jdbcTemplate.update(sqlQuery,
+                review.getContent(),
+                review.getIsPositive(),
+                review.getUserId(),
+                review.getFilmId(),
+                review.getUseful());
+        review.setReviewId(count);
+        count++;
         return review;
     }
 
