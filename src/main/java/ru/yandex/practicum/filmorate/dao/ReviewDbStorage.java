@@ -154,26 +154,6 @@ public class ReviewDbStorage implements ReviewStorage {
         return getReviewById(reviewId);
     }
 
-    @Override
-    public Integer getUser(Integer idReview) {
-        String sql = "select user_id from review where reviewId = ?";
-        return jdbcTemplate.queryForObject(sql, this::findUserID, idReview);
-    }
-
-    private Integer findUserID(ResultSet res, int rowNum) throws SQLException {
-        return res.getInt("user_id");
-    }
-
-    @Override
-    public Integer getFilm(Integer idReview) {
-        String sql = "select film_id from review where reviewId = ?";
-        return jdbcTemplate.queryForObject(sql, this::findFilmID, idReview);
-    }
-
-    private Integer findFilmID(ResultSet res, int rowNum) throws SQLException {
-        return res.getInt("film_id");
-    }
-
     private Review findReview(ResultSet resultSet, int rowNum) throws SQLException {
         return Review.builder()
                 .reviewId(resultSet.getInt("reviewId"))

@@ -15,10 +15,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -205,10 +202,22 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> getListFilm(List<Integer> list) {
-        List<Film> listFilm = new ArrayList<>();
-        for (Integer integer : list) {
-            listFilm.add(getFilmForId(integer));
-        }
+        String s = String.join(",", Collections.nCopies(list.size(), "?"));
+
+        List<Film> listFilm = jdbcTemplate.query(
+                String.format("select * from MPA, FILMS where FILMS.MPA_ID = MPA.MPA_ID and FILM_ID in (%s)", s),
+                list.toArray(), this::findFilm);
         return listFilm;
+    }
+
+
+    @Override
+    public Integer getFilm(Integer idReview) {
+        String sql = "select film_id from review where reviewId = ?";
+        return jdbcTemplate.queryForObject(sql, this::findFilmID, idReview);
+    }
+
+    private Integer findFilmID(ResultSet res, int rowNum) throws SQLException {
+        return res.getInt("film_id");
     }
 }

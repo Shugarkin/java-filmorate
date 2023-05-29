@@ -93,4 +93,15 @@ public class UserDbStorage implements UserStorage {
                 .build();
     }
 
+
+    @Override
+    public Integer getUser(Integer idReview) {
+        String sql = "select user_id from review where reviewId = ?";
+        return jdbcTemplate.queryForObject(sql, this::findUserID, idReview);
+    }
+
+    private Integer findUserID(ResultSet res, int rowNum) throws SQLException {
+        return res.getInt("user_id");
+    }
+
 }

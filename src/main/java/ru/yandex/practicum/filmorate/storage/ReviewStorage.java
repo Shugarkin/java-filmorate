@@ -26,7 +26,9 @@ public interface ReviewStorage {
 
     List<Review> getAllReviews(Integer count);
 
-    Integer getUser(Integer idReview);
+    //void filmExistsById(Integer filmId);
 
-    Integer getFilm(Integer idReview);
+    //void reviewExistsById(Integer reviewId);
+
+    //void userExistsById(Integer userId);
 }

@@ -100,5 +100,9 @@ public class UserService {
     public List<Film> getRecommendation(Integer userId) {
         return filmService.getListFilm(recommendationService.getRecommendation(userId));
     }
+
+    public Integer getUser(Integer idReview) {
+        return userDbStorage.getUser(idReview);
+    }
 }
 
