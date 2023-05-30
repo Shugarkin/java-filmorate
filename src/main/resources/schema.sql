@@ -51,6 +51,27 @@ create table IF NOT EXISTS GENRE_FILM
     foreign key (GENRE_ID) references GENRE(GENRE_ID) ON DELETE CASCADE
     );
 
+create table IF NOT EXISTS DIRECTORS
+(
+    DIRECTOR_ID   INTEGER auto_increment,
+    DIRECTOR_NAME CHARACTER VARYING not null,
+    constraint DIRECTORS_PK
+    PRIMARY KEY (DIRECTOR_ID)
+);
+
+create table IF NOT EXISTS FILM_DIRECTOR
+(
+    DIRECTOR_FILM_ID INTEGER auto_increment,
+    FILM_ID  INTEGER not null references FILMS(FILM_ID) ON DELETE CASCADE,
+    DIRECTOR_ID INTEGER not null references DIRECTORS(DIRECTOR_ID) ON DELETE CASCADE,
+    constraint FILM_DIRECTOR_PK
+    PRIMARY KEY (DIRECTOR_FILM_ID),
+    constraint FILM_DIRECTOR_FK
+    foreign key (FILM_ID) references FILMS(FILM_ID) on delete cascade,
+    constraint FILM_DIRECTOR_FK_1
+    foreign key (DIRECTOR_ID) references DIRECTORS(DIRECTOR_ID) on delete cascade
+    );
+
 create table IF NOT EXISTS USERS
 (
     USER_ID INTEGER  auto_increment,
@@ -98,7 +119,8 @@ create table IF NOT EXISTS review
     useful INTEGER
     );
 
-    create table if not exists REVIEW_LIKES (
+create table if not exists REVIEW_LIKES
+(
     user_id     int references USERS(user_id) ON DELETE CASCADE,
     review_id   int references review(reviewId) ON DELETE CASCADE,
     useful      INTEGER NOT NULL,
@@ -107,25 +129,7 @@ create table IF NOT EXISTS review
     constraint LIKE_REVIEW_USER_ID_FK    foreign key (user_id) references USERS(USER_ID) ON DELETE CASCADE
     );
 
-create table IF NOT EXISTS DIRECTORS
-(
-    DIRECTOR_ID   INTEGER auto_increment,
-    DIRECTOR_NAME CHARACTER VARYING not null,
-    constraint DIRECTORS_PK
-    PRIMARY KEY (DIRECTOR_ID)
-);
 
-create table IF NOT EXISTS FILM_DIRECTOR
-(
-    FILM_ID  INTEGER not null,
-    DIRECTOR_ID INTEGER not null,
-    constraint FILM_DIRECTOR_PK
-    PRIMARY KEY (FILM_ID, DIRECTOR_ID),
-    constraint FILM_DIRECTOR_FK
-    foreign key (FILM_ID) references FILMS on delete cascade,
-    constraint FILM_DIRECTOR_FK_1
-    foreign key (DIRECTOR_ID) references DIRECTORS on delete cascade
-    );
 
 
 create type EVENT_TYPE_ENUM as enum ('created', 'approved', 'finshed');

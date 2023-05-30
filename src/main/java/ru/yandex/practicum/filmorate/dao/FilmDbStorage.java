@@ -189,7 +189,7 @@ public class FilmDbStorage implements FilmStorage {
                         .id(resultSet.getInt("MPA_ID"))
                         .name(resultSet.getString("MPA_NAME")).build())
                 .genres(new LinkedHashSet<>())
-                .directors(getDirector(resultSet.getInt("FILM_ID")))
+                .directors(new HashSet<>())
                 .build();
     }
 

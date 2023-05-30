@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.dao;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.LikeStorage;
@@ -12,7 +11,6 @@ import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 @Component
 public class LikeDbStorage implements LikeStorage {
@@ -140,21 +138,8 @@ public class LikeDbStorage implements LikeStorage {
                         .id(resultSet.getInt("MPA_ID"))
                         .name(resultSet.getString("MPA_NAME")).build())
                 .genres(new LinkedHashSet<>())
-                .directors(getListDirector(resultSet))
+                .directors(new HashSet<>())
                 .build();
     }
 
-    private Set<Director> getListDirector(ResultSet rs) throws SQLException {
-        Set<Director> set = new HashSet<>();
-
-        Director d = Director.builder()
-                .id(rs.getInt("director_id"))
-                .name(rs.getString("director_name"))
-                .build();
-
-        if (d.getName() != null || d.getId() > 0) {
-            set.add(d);
-        }
-        return set;
-    }
 }

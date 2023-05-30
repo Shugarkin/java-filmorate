@@ -41,12 +41,16 @@ public class DirectorService {
         return directorStorage.isDirectorExists(id);
     }
 
-    public void addDirector(int filmId, int directorId) {
-        directorStorage.addDirector(filmId, directorId);
+    public void addDirector(Film film) {
+        directorStorage.addDirector(film);
     }
 
-    public void updateDirectorInFilm(Film film) {
-        directorStorage.updateDirectorInFilm(film);
+    public void deleteDirectorByFilm(int id) {
+        directorStorage.deleteDirectorByFilm(id);
+    }
+
+    public void load(List<Film> film) {
+        directorStorage.load(film);
     }
 
 }

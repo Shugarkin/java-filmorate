@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.dao;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -15,8 +16,13 @@ import ru.yandex.practicum.filmorate.storage.DirectorStorage;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
+
+import static java.util.function.Function.identity;
 
 @Component
 @RequiredArgsConstructor
@@ -55,12 +61,23 @@ public class DirectorDbStorage implements DirectorStorage {
     @Override
     public void deleteDirector(int id) {
         if (isDirectorExists(id)) {
-            String deleteDirector = "delete from directors where director_id = ?";
-            jdbcTemplate.update(deleteDirector, id);
+            String deleteDirector = "delete from directors where DIRECTOR_ID = ?; delete from FILM_DIRECTOR where FILM_ID = ?;";
+            jdbcTemplate.update(deleteDirector, id, id);
             log.info("Режиссер с id = {} удалён", id);
         } else {
             log.warn("Режиссер с id = {} не найден", id);
             throw new DirectorNotFoundException(String.format("Режиссер с id %d не найден", id));
+        }
+    }
+
+    @Override
+    public void deleteDirectorByFilm(int id) {
+        if (isDirectorExists(id)) {
+            String deleteDirector = "delete from FILM_DIRECTOR where FILM_ID = ?;";
+            jdbcTemplate.update(deleteDirector, id);
+            log.info("Режиссер с id = {} удалён", id);
+        } else {
+            log.warn("Режиссер с id = {} не найден", id);
         }
     }
 
@@ -83,18 +100,26 @@ public class DirectorDbStorage implements DirectorStorage {
     }
 
     @Override
-    public void updateDirectorInFilm(Film film) {
-        String sqlDelete = "delete from film_director where film_id = ?";
-        jdbcTemplate.update(sqlDelete, film.getId());
-        if (film.getDirectors() != null) {
-            for (Director director : film.getDirectors()) {
-                if (isDirectorExists(director.getId())) {
-                    addDirector(film.getId(), director.getId());
-                } else {
-                    throw new DirectorNotFoundException("Режиссер не найден");
-                }
-            }
-        }
+    public void load(List<Film> films) {
+        final Map<Integer, Film> filmById = films.stream().collect(Collectors.toMap(Film::getId, identity()));
+
+        String inSql = String.join(",", Collections.nCopies(films.size(), "?"));
+
+        final String sqlQuery = "select fd.FILM_ID, fd.DIRECTOR_ID, d.DIRECTOR_NAME " +
+                "from FILM_DIRECTOR fd join DIRECTORS d on fd.DIRECTOR_ID = d.DIRECTOR_ID " +
+                " where fd.FILM_ID in (" + inSql + ")";
+
+        jdbcTemplate.query(sqlQuery, (rs) -> {
+            final Film film = filmById.get(rs.getInt("FILM_ID"));
+            film.addDirector(findDirector(rs, 0));
+            }, films.stream().map(Film::getId).toArray());
+        List<Film> list = films;
+    }
+
+    private Director findDirector(ResultSet resultSet, int rowNum) throws SQLException {    return Director.builder()
+            .id(resultSet.getInt("DIRECTOR_ID"))
+            .name(resultSet.getString("DIRECTOR_NAME"))
+            .build();
     }
 
     @Override
@@ -105,9 +130,23 @@ public class DirectorDbStorage implements DirectorStorage {
     }
 
     @Override
-    public void addDirector(int filmId, int directorId) {
-        String sqlQuery = "insert into film_director (film_id, director_id) values (?, ?)";
-        jdbcTemplate.update(sqlQuery, filmId, directorId);
+    public void addDirector (Film film) {
+        String addGenre = "insert into FILM_DIRECTOR (FILM_ID, DIRECTOR_ID) values(?,?)";
+        List<Integer> directors = film.getDirectors()
+                .stream()
+                .map(s -> s.getId())
+                .collect(Collectors.toList());
+        jdbcTemplate.batchUpdate(addGenre, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                ps.setInt(1, film.getId());
+                ps.setInt(2, directors.get(i));
+            }
+            @Override
+            public int getBatchSize() {
+                return directors.size();
+            }
+        });
     }
 
     private Director mapRowDirector(ResultSet rs) throws SQLException {
