@@ -116,7 +116,8 @@ public class DirectorDbStorage implements DirectorStorage {
         List<Film> list = films;
     }
 
-    private Director findDirector(ResultSet resultSet, int rowNum) throws SQLException {    return Director.builder()
+    private Director findDirector(ResultSet resultSet, int rowNum) throws SQLException {
+        return Director.builder()
             .id(resultSet.getInt("DIRECTOR_ID"))
             .name(resultSet.getString("DIRECTOR_NAME"))
             .build();
@@ -130,7 +131,7 @@ public class DirectorDbStorage implements DirectorStorage {
     }
 
     @Override
-    public void addDirector (Film film) {
+    public void addDirector(Film film) {
         String addGenre = "insert into FILM_DIRECTOR (FILM_ID, DIRECTOR_ID) values(?,?)";
         List<Integer> directors = film.getDirectors()
                 .stream()
@@ -142,6 +143,7 @@ public class DirectorDbStorage implements DirectorStorage {
                 ps.setInt(1, film.getId());
                 ps.setInt(2, directors.get(i));
             }
+
             @Override
             public int getBatchSize() {
                 return directors.size();
