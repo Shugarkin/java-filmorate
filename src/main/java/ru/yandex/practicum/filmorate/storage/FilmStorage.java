@@ -22,8 +22,6 @@ public interface FilmStorage {
 
     List<Film> getFilmsByDirectorSortedByYears(int directorId);
 
-    Set<Director> getDirector(int filmId);
-
     void addDirectorToFilm(int filmId, int directorId);
 
     List<Film> getListFilm(List<Integer> list);

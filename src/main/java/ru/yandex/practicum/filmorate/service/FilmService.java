@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.DirectorNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserIsNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
-import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.FilmSortBy;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
@@ -14,7 +13,6 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @Slf4j
@@ -146,14 +144,6 @@ public class FilmService {
         genreService.load(listFilm);
         directorService.load(listFilm);
         return listFilm;
-    }
-
-    public void addDirectorToFilm(int filmId, int directorId) {
-        filmStorage.addDirectorToFilm(filmId, directorId);
-    }
-
-    public Set<Director> getDirector(int filmId) {
-        return filmStorage.getDirector(filmId);
     }
 
     public Integer getFilm(Integer idReview) {

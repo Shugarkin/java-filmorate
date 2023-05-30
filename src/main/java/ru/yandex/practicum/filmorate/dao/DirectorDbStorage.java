@@ -28,7 +28,6 @@ import static java.util.function.Function.identity;
 @RequiredArgsConstructor
 @Slf4j
 public class DirectorDbStorage implements DirectorStorage {
-
     private final JdbcTemplate jdbcTemplate;
 
     @Override
@@ -86,7 +85,7 @@ public class DirectorDbStorage implements DirectorStorage {
         String sqlQuery = "select director_id, director_name from directors where director_id = ?";
         SqlRowSet directorRows = jdbcTemplate.queryForRowSet(sqlQuery, id);
         if (directorRows.next()) {
-            return jdbcTemplate.queryForObject(sqlQuery, (rs, rowNum) -> mapRowDirector(rs), id);
+            return jdbcTemplate.queryForObject(sqlQuery, (rs, rowNum) -> findDirector(rs, 0), id);
         } else {
             log.warn("Режиссер с id = {} не найден", id);
             throw new DirectorNotFoundException(String.format("Режиссер с id %d не найден", id));
@@ -96,31 +95,25 @@ public class DirectorDbStorage implements DirectorStorage {
     @Override
     public List<Director> getListAllDirectors() {
         String sqlQuery = "select director_id, director_name from directors";
-        return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> mapRowDirector(rs));
+        return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> findDirector(rs, 0));
     }
 
     @Override
     public void load(List<Film> films) {
         final Map<Integer, Film> filmById = films.stream().collect(Collectors.toMap(Film::getId, identity()));
-
         String inSql = String.join(",", Collections.nCopies(films.size(), "?"));
-
-        final String sqlQuery = "select fd.FILM_ID, fd.DIRECTOR_ID, d.DIRECTOR_NAME " +
-                "from FILM_DIRECTOR fd join DIRECTORS d on fd.DIRECTOR_ID = d.DIRECTOR_ID " +
+        final String sqlQuery = "select fd.FILM_ID, fd.DIRECTOR_ID, d.DIRECTOR_NAME " + "from FILM_DIRECTOR fd join DIRECTORS d on fd.DIRECTOR_ID = d.DIRECTOR_ID " +
                 " where fd.FILM_ID in (" + inSql + ")";
-
         jdbcTemplate.query(sqlQuery, (rs) -> {
             final Film film = filmById.get(rs.getInt("FILM_ID"));
             film.addDirector(findDirector(rs, 0));
-            }, films.stream().map(Film::getId).toArray());
+        }, films.stream().map(Film::getId).toArray());
         List<Film> list = films;
     }
 
     private Director findDirector(ResultSet resultSet, int rowNum) throws SQLException {
-        return Director.builder()
-            .id(resultSet.getInt("DIRECTOR_ID"))
-            .name(resultSet.getString("DIRECTOR_NAME"))
-            .build();
+        return Director.builder().id(resultSet.getInt("DIRECTOR_ID"))
+                .name(resultSet.getString("DIRECTOR_NAME")).build();
     }
 
     @Override
@@ -134,8 +127,7 @@ public class DirectorDbStorage implements DirectorStorage {
     public void addDirector(Film film) {
         String addGenre = "insert into FILM_DIRECTOR (FILM_ID, DIRECTOR_ID) values(?,?)";
         List<Integer> directors = film.getDirectors()
-                .stream()
-                .map(s -> s.getId())
+                .stream().map(s -> s.getId())
                 .collect(Collectors.toList());
         jdbcTemplate.batchUpdate(addGenre, new BatchPreparedStatementSetter() {
             @Override
@@ -149,12 +141,5 @@ public class DirectorDbStorage implements DirectorStorage {
                 return directors.size();
             }
         });
-    }
-
-    private Director mapRowDirector(ResultSet rs) throws SQLException {
-        return Director.builder()
-                .id(rs.getInt("director_id"))
-                .name(rs.getString("director_name"))
-                .build();
     }
 }

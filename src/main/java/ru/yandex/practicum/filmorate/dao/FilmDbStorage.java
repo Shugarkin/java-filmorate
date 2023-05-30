@@ -120,16 +120,6 @@ public class FilmDbStorage implements FilmStorage {
         return jdbcTemplate.query(sqlQuery, this::findFilm, directorId);
     }
 
-
-    @Override
-    public Set<Director> getDirector(int filmId) {
-        String sqlQuery = "select d.director_id, d.director_name, fd.film_id " +
-                "from directors as d " +
-                "left join film_director as fd on d.director_id = fd.director_id where film_id = ?";
-        return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> mapRowDirector(rs), filmId)
-                .stream().collect(Collectors.toSet());
-    }
-
     @Override
     public void addDirectorToFilm(int filmId, int directorId) {
         String sqlQuery = "insert into film_director (film_id, director_id) values (?, ?)";
@@ -190,13 +180,6 @@ public class FilmDbStorage implements FilmStorage {
                         .name(resultSet.getString("MPA_NAME")).build())
                 .genres(new LinkedHashSet<>())
                 .directors(new HashSet<>())
-                .build();
-    }
-
-    private Director mapRowDirector(ResultSet rs) throws SQLException {
-        return Director.builder()
-                .id(rs.getInt("director_id"))
-                .name(rs.getString("director_name"))
                 .build();
     }
 
