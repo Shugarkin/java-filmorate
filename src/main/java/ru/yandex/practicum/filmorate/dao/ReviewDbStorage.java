@@ -1,15 +1,12 @@
 package ru.yandex.practicum.filmorate.dao;
 
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.FilmIsNotFoundException;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.ReviewStorage;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -18,6 +15,7 @@ import java.util.List;
 public class ReviewDbStorage implements ReviewStorage {
 
     private final JdbcTemplate jdbcTemplate;
+    int count = 1;
 
     public ReviewDbStorage(JdbcTemplate jdbcTemplate) {
 
@@ -27,20 +25,16 @@ public class ReviewDbStorage implements ReviewStorage {
     @Override
     public Review addReview(Review review) {
 
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-
         String sqlQuery = "insert into review (content_review, is_Positive, user_id, film_id, useful)"
                 + " values(?, ?, ?, ?, ?)";
-        jdbcTemplate.update(connection -> {
-            PreparedStatement stmt = connection.prepareStatement(sqlQuery, new String[]{"reviewId"});
-            stmt.setString(1, review.getContent());
-            stmt.setBoolean(2, review.getIsPositive());
-            stmt.setInt(3, review.getUserId());
-            stmt.setInt(4, review.getFilmId());
-            stmt.setInt(5, review.getUseful());
-            return stmt;
-        }, keyHolder);
-        review.setReviewId(keyHolder.getKey().intValue());
+        jdbcTemplate.update(sqlQuery,
+                review.getContent(),
+                review.getIsPositive(),
+                review.getUserId(),
+                review.getFilmId(),
+                review.getUseful());
+        review.setReviewId(count);
+        count++;
         return review;
     }
 
@@ -56,11 +50,12 @@ public class ReviewDbStorage implements ReviewStorage {
     }
 
     @Override
-    public List<Review> getAllReviews() {
+    public List<Review> getAllReviews(Integer count) {
         String sqlQuery = "SELECT *\n" +
                 "FROM review\n" +
-                "ORDER BY useful DESC;";
-        return jdbcTemplate.query(sqlQuery, this::findReview);
+                "ORDER BY useful DESC\n" +
+                "LIMIT ?";
+        return jdbcTemplate.query(sqlQuery, this::findReview, count);
     }
 
     @Override
@@ -73,9 +68,6 @@ public class ReviewDbStorage implements ReviewStorage {
         jdbcTemplate.update(sqlQuery,
                 review.getContent(),
                 review.getIsPositive(),
-                //review.getUserId(), - апдейт поля заблочен пока есть ошибка в тестах
-                //review.getFilmId(), - апдейт поля заблочен пока есть ошибка в тестах
-                //review.getUseful(), - апдейт поля заблочен пока есть ошибка в тестах
                 review.getReviewId());
         return review;
     }
@@ -122,14 +114,9 @@ public class ReviewDbStorage implements ReviewStorage {
     public Review addLikeReview(Integer reviewId, Integer userId) {
         reviewExistsById(reviewId);
         userExistsById(userId);
-        String sqlQuery = "INSERT INTO review_likes (review_id, user_id) VALUES (?, ?);\n" +
-                "update review set useful = ((SELECT COUNT(user_id)\n" +
-                "                             FROM review_likes\n" +
-                "                             WHERE review_id = review.reviewId) -\n" +
-                "                            (SELECT COUNT(user_id)\n" +
-                "                             FROM review_dislikes\n" +
-                "                             WHERE review_id = review.reviewId)) where reviewId = ?";
-        jdbcTemplate.update(sqlQuery, reviewId, userId, reviewId);
+        String sqlQuery = "INSERT INTO REVIEW_LIKES (user_id, review_id, useful) VALUES (?, ?, 1);" +
+                " update review r set useful = (select sum(l.useful) from REVIEW_LIKES l where l.review_id = r.reviewId)  where reviewId = ?;";
+        jdbcTemplate.update(sqlQuery,userId, reviewId, reviewId);
         return getReviewById(reviewId);
     }
 
@@ -137,27 +124,17 @@ public class ReviewDbStorage implements ReviewStorage {
     public Review addDislikeReview(Integer reviewId, Integer userId) {
         reviewExistsById(reviewId);
         userExistsById(userId);
-        String sqlQuery = "INSERT INTO review_dislikes (review_id, user_id) VALUES (?, ?);\n" +
-                "update review set useful = ((SELECT COUNT(user_id)\n" +
-                "                             FROM review_likes\n" +
-                "                             WHERE review_id = review.reviewId) -\n" +
-                "                            (SELECT COUNT(user_id)\n" +
-                "                             FROM review_dislikes\n" +
-                "                             WHERE review_id = review.reviewId)) where reviewId = ?";
-        jdbcTemplate.update(sqlQuery, reviewId, userId, reviewId);
+        String sqlQuery = "INSERT INTO REVIEW_LIKES (user_id, review_id, useful) VALUES (?, ?, -1);" +
+                " update review r set useful = (select sum(l.useful) from REVIEW_LIKES l where l.review_id = r.reviewId)  where reviewId = ?;";
+        jdbcTemplate.update(sqlQuery, userId, reviewId, reviewId);
         return getReviewById(reviewId);
     }
 
     @Override
     public Review deleteLikeReview(Integer reviewId, Integer userId) {
         reviewExistsById(reviewId);
-        jdbcTemplate.update("DELETE FROM review_likes WHERE review_id = ? AND user_id = ?;\n" +
-                        "update review set useful = ((SELECT COUNT(user_id)\n" +
-                        "                             FROM review_likes\n" +
-                        "                             WHERE review_id = review.reviewId) -\n" +
-                        "                            (SELECT COUNT(user_id)\n" +
-                        "                             FROM review_dislikes\n" +
-                        "                             WHERE review_id = review.reviewId)) where reviewId = ?;",
+        jdbcTemplate.update("DELETE FROM REVIEW_LIKES WHERE review_id = ? AND user_id = ?;\n" +
+                        " update review r set useful = (select sum(l.useful) from REVIEW_LIKES l where l.review_id = r.reviewId)  where reviewId = ?;",
                 reviewId, userId, reviewId);
         return getReviewById(reviewId);
     }
@@ -165,13 +142,8 @@ public class ReviewDbStorage implements ReviewStorage {
     @Override
     public Review deleteDislikeReview(Integer reviewId, Integer userId) {
         reviewExistsById(reviewId);
-        jdbcTemplate.update("DELETE FROM review_dislikes WHERE review_id = ? AND user_id = ?;\n" +
-                        "update review set useful = ((SELECT COUNT(user_id)\n" +
-                        "                             FROM review_likes\n" +
-                        "                             WHERE review_id = review.reviewId) -\n" +
-                        "                            (SELECT COUNT(user_id)\n" +
-                        "                             FROM review_dislikes\n" +
-                        "                             WHERE review_id = review.reviewId)) where reviewId = ?",
+        jdbcTemplate.update("DELETE FROM REVIEW_LIKES WHERE review_id = ? AND user_id = ?;\n" +
+                " update review r set useful = (select sum(l.useful) from REVIEW_LIKES l where l.review_id = r.reviewId)  where reviewId = ?;",
                 reviewId, userId, reviewId);
         return getReviewById(reviewId);
     }

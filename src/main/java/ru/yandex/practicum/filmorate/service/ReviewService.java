@@ -41,8 +41,7 @@ public class ReviewService {
         }
         review.setUseful(0);
         reviewStorage.addReview(review);
-        feedService.addFeed(review.getUserId(), review.getReviewId(), EventType.REVIEW, Operation.ADD);// получение id пользователя
-        // через методы нужно из-за проблемы с тестами
+        feedService.addFeed(review.getUserId(), review.getReviewId(), EventType.REVIEW, Operation.ADD);
         return review;
     }
 
@@ -50,8 +49,8 @@ public class ReviewService {
         return reviewStorage.getAllReviewsByFilm(filmId, count);
     }
 
-    public List<Review> getAllReviews() {
-        return reviewStorage.getAllReviews();
+    public List<Review> getAllReviews(Integer count) {
+        return reviewStorage.getAllReviews(count);
     }
 
     public Review updateReview(Review review) {
