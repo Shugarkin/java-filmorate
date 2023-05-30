@@ -9,8 +9,6 @@ drop table IF EXISTS FILM_DIRECTOR CASCADE;
 drop table IF EXISTS FEED CASCADE;
 drop table IF EXISTS review CASCADE;
 drop table IF EXISTS REVIEW_LIKES CASCADE;
---drop table IF EXISTS review_likes CASCADE;
---drop table IF EXISTS review_dislikes CASCADE;
 drop domain IF EXISTS EVENT_TYPE_ENUM CASCADE;
 
 
@@ -92,7 +90,7 @@ create table IF NOT EXISTS LIKE_VAULT
 
 create table IF NOT EXISTS review
 (
-    review_id INTEGER  auto_increment primary key,
+    reviewId INTEGER  auto_increment primary key,
     content_review  CHARACTER VARYING not null,
     is_Positive  CHARACTER VARYING not null,
     user_id INTEGER NOT NULL REFERENCES USERS (USER_ID),
@@ -101,31 +99,13 @@ create table IF NOT EXISTS review
     );
 
     create table if not exists REVIEW_LIKES (
-    user_id     int references USERS(user_id),
-    review_id   int references review(review_id),
-    useful      int,
+    user_id     int references USERS(user_id) ON DELETE CASCADE,
+    review_id   int references review(reviewId) ON DELETE CASCADE,
+    useful      INTEGER NOT NULL,
     constraint LIKE_REVIEW_PK PRIMARY KEY (user_id, review_id),
-    constraint LIKE_REVIEW_REVIEW_ID_FK    foreign key (review_id) references review(review_Id) ON DELETE CASCADE,
+    constraint LIKE_REVIEW_REVIEW_ID_FK    foreign key (review_id) references review(reviewId) ON DELETE CASCADE,
     constraint LIKE_REVIEW_USER_ID_FK    foreign key (user_id) references USERS(USER_ID) ON DELETE CASCADE
     );
-
-    --create table IF NOT EXISTS review_likes
---(
-   -- review_id INTEGER NOT NULL,
-   -- user_id INTEGER NOT NULL,
-   -- constraint LIKE_REVIEW_PK    PRIMARY KEY (review_id, user_id),
-   -- constraint LIKE_REVIEW_REVIEW_ID_FK    foreign key (review_id) references review(review_Id) ON DELETE CASCADE,
-   -- constraint LIKE_REVIEW_USER_ID_FK    foreign key (user_id) references USERS(USER_ID) ON DELETE CASCADE
---);
-
---create table IF NOT EXISTS review_dislikes
---(
-  --  review_id INTEGER NOT NULL,
-   -- user_id INTEGER NOT NULL,
-   -- constraint LIKE_REVIEW    PRIMARY KEY (review_id, user_id),
-   -- constraint LIKE_REVIEW_REVIEW_ID    foreign key (review_id) references review(review_Id) ON DELETE CASCADE,
-   -- constraint LIKE_REVIEW_USER_ID    foreign key (user_id) references USERS(USER_ID) ON DELETE CASCADE
---);
 
 create table IF NOT EXISTS DIRECTORS
 (

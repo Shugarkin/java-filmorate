@@ -118,8 +118,8 @@ public class ReviewDbStorage implements ReviewStorage {
     public Review addLikeReview(Integer reviewId, Integer userId) {
         reviewExistsById(reviewId);
         userExistsById(userId);
-        String sqlQuery = "INSERT INTO REVIEW_LIKES (user_id, review_id, useful = 1) VALUES (?, ?);" +
-                " update review r set useful = (select sum(l.useful) from REVIEW_LIKES l where l.review_id = r.review_id)  where review_id = ?;";
+        String sqlQuery = "INSERT INTO REVIEW_LIKES (user_id, review_id, useful) VALUES (?, ?, 1);" +
+                " update review r set useful = (select sum(l.useful) from REVIEW_LIKES l where l.review_id = r.reviewId)  where reviewId = ?;";
         jdbcTemplate.update(sqlQuery,userId, reviewId, reviewId);
         return getReviewById(reviewId);
     }
@@ -128,8 +128,8 @@ public class ReviewDbStorage implements ReviewStorage {
     public Review addDislikeReview(Integer reviewId, Integer userId) {
         reviewExistsById(reviewId);
         userExistsById(userId);
-        String sqlQuery = "INSERT INTO REVIEW_LIKES (user_id, review_id, useful = -1) VALUES (?, ?);" +
-                " update review r set useful = (select sum(l.useful) from REVIEW_LIKES l where l.review_id = r.review_id)  where review_id = ?;";
+        String sqlQuery = "INSERT INTO REVIEW_LIKES (user_id, review_id, useful) VALUES (?, ?, -1);" +
+                " update review r set useful = (select sum(l.useful) from REVIEW_LIKES l where l.review_id = r.reviewId)  where reviewId = ?;";
         jdbcTemplate.update(sqlQuery, userId, reviewId, reviewId);
         return getReviewById(reviewId);
     }
@@ -138,7 +138,7 @@ public class ReviewDbStorage implements ReviewStorage {
     public Review deleteLikeReview(Integer reviewId, Integer userId) {
         reviewExistsById(reviewId);
         jdbcTemplate.update("DELETE FROM REVIEW_LIKES WHERE review_id = ? AND user_id = ?;\n" +
-                        " update review r set useful = (select sum(l.useful) from REVIEW_LIKES l where l.review_id = r.review_id)  where review_id = ?;",
+                        " update review r set useful = (select sum(l.useful) from REVIEW_LIKES l where l.review_id = r.reviewId)  where reviewId = ?;",
                 reviewId, userId, reviewId);
         return getReviewById(reviewId);
     }
@@ -147,7 +147,7 @@ public class ReviewDbStorage implements ReviewStorage {
     public Review deleteDislikeReview(Integer reviewId, Integer userId) {
         reviewExistsById(reviewId);
         jdbcTemplate.update("DELETE FROM REVIEW_LIKES WHERE review_id = ? AND user_id = ?;\n" +
-                " update review r set useful = (select sum(l.useful) from REVIEW_LIKES l where l.review_id = r.review_id)  where review_id = ?;",
+                " update review r set useful = (select sum(l.useful) from REVIEW_LIKES l where l.review_id = r.reviewId)  where reviewId = ?;",
                 reviewId, userId, reviewId);
         return getReviewById(reviewId);
     }
