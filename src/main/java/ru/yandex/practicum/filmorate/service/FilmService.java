@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.exception.UserIsNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.FilmSortBy;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.util.HashSet;
@@ -118,19 +119,19 @@ public class FilmService {
         filmStorage.deleteFilmById(filmId);
     }
 
-    public List<Film> getFilmsByDirectorSorted(int directorId, String sortBy) {
+    public List<Film> getFilmsByDirectorSorted(int directorId, FilmSortBy sortBy) {
         if (sortBy == null) {
             throw new ValidationException("Пустой параметр сортировки");
         }
         if (!directorService.isDirectorExists(directorId)) {
             throw new DirectorNotFoundException("Режиссер не найден");
         }
-        if (sortBy.equals("likes")) {
+        if (sortBy == FilmSortBy.likes) {
             List<Film> films = filmStorage.getFilmsByDirectorSortedByLikes(directorId);
             genreService.load(films);
             directorService.load(films);
             return films;
-        } else if (sortBy.equals("year")) {
+        } else if (sortBy == FilmSortBy.year) {
             List<Film> films = filmStorage.getFilmsByDirectorSortedByYears(directorId);
             genreService.load(films);
             directorService.load(films);
