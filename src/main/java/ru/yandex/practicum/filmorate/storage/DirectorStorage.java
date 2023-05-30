@@ -21,7 +21,7 @@ public interface DirectorStorage {
 
     boolean isDirectorExists(int id);
 
-    void addDirector (Film film);
+    void addDirector(Film film);
 
     void load(List<Film> films);
 
