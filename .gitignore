@@ -18,6 +18,9 @@ HELP.md
 mvnw
 mvnw.cmd
 
+*.db
+db/*
+
 ### STS ###
 .apt_generated
 .classpath

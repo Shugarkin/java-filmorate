@@ -11,7 +11,9 @@ import ru.yandex.practicum.filmorate.storage.GenreStorage;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.util.function.Function.identity;
@@ -54,20 +56,19 @@ public class GenreDbStorage implements GenreStorage {
                 .map(s -> s.getId())
                 .collect(Collectors.toList());
 
-            jdbcTemplate.batchUpdate(addGenre, new BatchPreparedStatementSetter() {
-                @Override
-                public void setValues(PreparedStatement ps, int i) throws SQLException {
-                    ps.setInt(1, film.getId());
-                    ps.setInt(2, genres.get(i));
-                }
+        jdbcTemplate.batchUpdate(addGenre, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                ps.setInt(1, film.getId());
+                ps.setInt(2, genres.get(i));
+            }
 
-                @Override
-                public int getBatchSize() {
-                    return genres.size();
-                }
-            });
+            @Override
+            public int getBatchSize() {
+                return genres.size();
+            }
+        });
     }
-
 
     private Genre findGenre(ResultSet resultSet, int rowNum) throws SQLException {
         return Genre.builder()

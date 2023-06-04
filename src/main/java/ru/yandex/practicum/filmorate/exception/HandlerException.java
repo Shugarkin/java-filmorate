@@ -13,7 +13,7 @@ import javax.validation.ConstraintViolationException;
 @Slf4j
 public class HandlerException {
     @ExceptionHandler({FilmIsNotFoundException.class, UserIsNotFoundException.class,
-            IncorrectIDException.class, ValidationException.class, GenreNotFoundException.class})
+            IncorrectIDException.class, ValidationException.class, GenreNotFoundException.class, DirectorNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse notFoundError(final RuntimeException e) {
         log.debug("Получен статус 404 Not found {}", e.getMessage(), e);
@@ -31,6 +31,13 @@ public class HandlerException {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse badRequest(final Exception e) {
         log.debug("Получен статус 400 Bad request {}", e.getMessage(), e);
+        return new ErrorResponse("Ошибка валидации", e.getMessage());
+    }
+
+    @ExceptionHandler({ReviewIsNotFoundException.class})
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse notFoundReview(final Exception e) {
+        log.debug("Получен статус 404 Not found {}", e.getMessage(), e);
         return new ErrorResponse("Ошибка валидации", e.getMessage());
     }
 }
