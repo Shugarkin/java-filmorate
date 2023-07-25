@@ -38,17 +38,17 @@ public class FilmController {
         return filmService.updateFilm(film);
     }
 
-    @PutMapping("/{id}/like/{userId}") //добавление лайка
+    @PutMapping("/{id}/like/{userId}")
     public void addLike(@PathVariable("id") Integer id, @PathVariable("userId") Integer userId) {
         filmService.addLike(id, userId);
     }
 
-    @DeleteMapping("/{id}/like/{userId}") //удаление лайка
+    @DeleteMapping("/{id}/like/{userId}")
     public void deleteLike(@PathVariable("id") Integer id, @PathVariable("userId") Integer userId) {
         filmService.deleteLike(id, userId);
     }
 
-    @GetMapping("/popular") //список популярных фильмов
+    @GetMapping("/popular")
     @Validated
     public List<Film> getPopularFilms(@Positive @RequestParam(defaultValue = "10") Integer count,
                                       @Positive @RequestParam(required = false) Integer genreId,
@@ -56,12 +56,12 @@ public class FilmController {
         return filmService.getPopularFilms(count, genreId, year);
     }
 
-    @GetMapping("/{id}") //получение фильма по айди
+    @GetMapping("/{id}")
     public Film getFilmForId(@PathVariable("id") int id) {
         return filmService.getFilmForId(id);
     }
 
-    @GetMapping("/common") //список общих фильмов
+    @GetMapping("/common")
     public List<Film> getCommonFilms(@RequestParam("userId") final Integer userId,
                                      @RequestParam("friendId") final Integer friendId) {
         return filmService.getCommonFilms(userId, friendId);
@@ -72,12 +72,12 @@ public class FilmController {
         return filmService.getFilmsByDirectorSorted(directorId, sortBy);
     }
 
-    @DeleteMapping("/{id}") //удаление фильма по id
+    @DeleteMapping("/{id}")
     public void filmDeleteById(@PathVariable("id") final Integer filmId) {
         filmService.filmDeleteById(filmId);
     }
 
-    @GetMapping("/search") // Возвращает список фильмов, отсортированных по популярности.
+    @GetMapping("/search")
     public List<Film> returnListFilmsSortedByPopularity(@RequestParam(required = false) String query,
                                                         @RequestParam(required = false) List<String> by) {
         return filmService.getListFilmsSortedByPopularity(query, by);
